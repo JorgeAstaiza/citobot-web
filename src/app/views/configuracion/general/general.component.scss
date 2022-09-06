@@ -1,0 +1,35 @@
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td,
+th {
+    border: 0px solid #ccc;
+    text-align: left;
+    padding: 8px;
+    border-bottom: 1px solid rgb(208, 208, 208);
+}
+
+tr:nth-child(even) {
+    background-color: #ffffff;
+}
+
+
+
+mat-form-field {
+    font-size: 15px;
+    width: 100%;
+}
+
+.ctn-filtro {
+    display: flex;
+    justify-content: space-around;
+    padding: 15px 0;
+
+    input,
+    select {
+        margin-right: 15px;
+    }
+}

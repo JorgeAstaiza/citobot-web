@@ -1,0 +1,56 @@
+<div class="video-container" *ngIf="!error">
+  <video
+    [class.show]="!isCaptured"
+    [class.hide]="isCaptured"
+    #video
+    id="video"
+    [width]="WIDTH"
+    [height]="HEIGHT"
+    autoplay
+  ></video>
+  <canvas
+    [class.show]="isCaptured"
+    [class.hide]="!isCaptured"
+    #canvas
+    id="canvas"
+    [width]="WIDTH"
+    [height]="HEIGHT"
+  ></canvas>
+</div>
+
+<div class="snap-container">
+  <button class="btn btn-primary" *ngIf="!isCaptured" (click)="capture()">
+    Capturar foto
+  </button>
+  <button class="btn btn-danger" *ngIf="isCaptured" (click)="removeCurrent()">
+    Tomar una nueva foto
+  </button>
+  <button class="button" (click)="changeWebCame(true)">Toggle Camera</button>
+  <div *ngIf="error" class="text-danger mt-4">
+    {{ error }}. Por favor recargue la pagina!
+  </div>
+</div>
+
+<ul class="list-unstyled">
+  <li>
+    <mat-radio-group class="mt-2">
+      <c-row class="mt-1">
+        <c-col>
+          <div class="mb-3">
+            <mat-radio-button
+              *ngFor="let src of captures; let idx = index"
+              (click)="setPhoto(idx)"
+              [value]="idx"
+              style="margin-bottom: 8px"
+              >Imagen {{ idx }}
+              <mat-card class="card-imagen">
+                <!-- Previsualización de Imagenes -->
+                <img [src]="src" height="350" width="350" />
+              </mat-card>
+            </mat-radio-button>
+          </div>
+        </c-col>
+      </c-row>
+    </mat-radio-group>
+  </li>
+</ul>

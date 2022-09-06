@@ -1,0 +1,97 @@
+<div class="bg-light min-vh-100 d-flex flex-column align-items-center justify-content-center">
+    <!--Toast de exito-->
+    <c-toast #toast="cToast" [autohide]="true" [visible]="usuarioRegistrado"
+        class="align-items-center text-white border-0 mb-4" color="primary">
+        <div class="d-flex">
+            <c-toast-body>
+                <span>Usuario registrado exitosamente!</span>
+            </c-toast-body>
+            <button aria-label="close" cButtonClose white class="me-2 m-auto" (click)="toast.visible = false"></button>
+        </div>
+    </c-toast>
+    <!--Toast password-->
+    <c-toast #toast="cToast" [autohide]="true" [visible]="passwordMistake"
+        class="align-items-center text-white border-0 mb-4" color="danger">
+        <div class="d-flex">
+            <c-toast-body>
+                <span>Las contraseñas no coinciden</span>
+            </c-toast-body>
+            <button aria-label="close" cButtonClose white class="me-2 m-auto" (click)="toast.visible = false"></button>
+        </div>
+    </c-toast>
+    <!--Toast form invalid-->
+    <c-toast #toast="cToast" [autohide]="true" [visible]="passwordMistake"
+        class="align-items-center text-white border-0 mb-4" color="warning">
+        <div class="d-flex">
+            <c-toast-body>
+                <span>Formulario invalido, intentelo nuevamente!</span>
+            </c-toast-body>
+            <button aria-label="close" cButtonClose white class="me-2 m-auto" (click)="toast.visible = false"></button>
+        </div>
+    </c-toast>
+
+    <c-container>
+        <c-row class="justify-content-center">
+            <c-col lg="7" md="9" xl="6">
+                <c-card class="mx-4">
+                    <c-card-body class="p-4">
+                        <form [formGroup]="formulario" cForm>
+                            <h1>Registro</h1>
+                            <p class="text-medium-emphasis">Cree una cuenta</p>
+                            <c-input-group class="mb-3">
+                                <span cInputGroupText>
+                                    <svg cIcon name="cilUser"></svg>
+                                </span>
+                                <input autoComplete="name" cFormControl placeholder="Username"
+                                    formControlName="userName" />
+                            </c-input-group>
+                            <c-input-group class="mb-3">
+                                <span cInputGroupText>
+                                    <svg cIcon name="cibCcAmex"></svg>
+                                </span>
+                                <input autoComplete="id" cFormControl placeholder="Identificacion"
+                                    formControlName="id" />
+                            </c-input-group>
+                            <c-input-group class="mb-3">
+                                <span cInputGroupText>
+                                    <svg cIcon name="cilList"></svg>
+                                </span>
+                                <select aria-label="Default select example" cSelect formControlName="role">
+                                    <option selected>Seleccione un rol</option>
+                                    <option value="ADMINISTRADOR">Administrador</option>
+                                    <option value="DOCTOR">Doctor</option>
+                                </select>
+                            </c-input-group>
+                            <c-input-group class="mb-3">
+                                <span cInputGroupText>@</span>
+                                <input autoComplete="email" cFormControl placeholder="Email" formControlName="email" />
+                            </c-input-group>
+                            <c-input-group class="mb-3">
+                                <span cInputGroupText>
+                                    <svg cIcon name="cilLockLocked"></svg>
+                                </span>
+                                <input autoComplete="new-password" cFormControl placeholder="Password" type="password"
+                                    formControlName="password" />
+                            </c-input-group>
+                            <c-input-group class="mb-4">
+                                <span cInputGroupText>
+                                    <svg cIcon name="cilLockLocked"></svg>
+                                </span>
+                                <input autoComplete="new-password" cFormControl placeholder="Repeat password"
+                                    type="password" formControlName="passwordRepeat" />
+                            </c-input-group>
+                            <div class="d-grid">
+                                <button cButton color="success" (click)="registrarUsuario()">
+                                    Registrarse
+                                </button>
+                            </div>
+                            <pre>{{formulario.value | json}}</pre>
+                        </form>
+                    </c-card-body>
+
+
+                </c-card>
+            </c-col>
+        </c-row>
+    </c-container>
+</div>

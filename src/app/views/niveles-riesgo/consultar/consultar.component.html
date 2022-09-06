@@ -1,0 +1,114 @@
+<c-container>
+  <c-col xs="12">
+    <img src="../../../../assets/img/brand/icono-nuevo-paciente.png" />
+  </c-col>
+
+  <c-col xs="12">
+    <c-card class="mb-4">
+      <c-card-header>
+        <c-row>
+          <c-col>
+            <!-- Filtrar por Nivel de Riesgo -->
+            <mat-form-field appearance="legacy" class="example-container">
+              <mat-label for="nivel-riesgo">
+                <mat-icon>sell</mat-icon> Nivel Riesgo
+              </mat-label>
+              <input
+                (keyup)="applyFilter($event)"
+                type="text"
+                matInput
+                #input
+              />
+            </mat-form-field>
+          </c-col>
+
+          <c-col>
+            <div style="text-align: right">
+              <button
+                style="margin-right: 5px"
+                mat-raised-button
+                color="info"
+                (click)="getAllNivelesRiesgo()"
+              >
+                <mat-icon>clear</mat-icon> Limpiar
+              </button>
+
+              <button
+                mat-raised-button
+                color="primary"
+                routerLink="/riesgos/crear"
+              >
+                <mat-icon>add</mat-icon> Nuevo
+              </button>
+            </div>
+          </c-col>
+        </c-row>
+      </c-card-header>
+
+      <c-card-body>
+        <!-- Mat Table -->
+        <div class="mat-elevation-z8">
+          <table mat-table [dataSource]="dataSource" matSort>
+            <!-- Id Column -->
+            <ng-container matColumnDef="Id">
+              <th mat-header-cell *matHeaderCellDef>
+                <strong> ID </strong>
+              </th>
+              <td mat-cell *matCellDef="let item">{{ item.niv_id }}</td>
+            </ng-container>
+
+            <!-- Descripción Column -->
+            <ng-container matColumnDef="Descripcion">
+              <th mat-header-cell *matHeaderCellDef>
+                <strong> DESCRIPCIÓN </strong>
+              </th>
+              <td mat-cell *matCellDef="let item">
+                {{ item.niv_descripcion }}
+              </td>
+            </ng-container>
+
+            <!-- Mensaje Column -->
+            <ng-container matColumnDef="Mensaje">
+              <th mat-header-cell *matHeaderCellDef>
+                <strong> MENSAJE </strong>
+              </th>
+              <td mat-cell *matCellDef="let item">{{ item.niv_mensaje }}</td>
+            </ng-container>
+
+            <!-- Acciones Column -->
+            <ng-container matColumnDef="Acciones">
+              <th style="text-align: center" mat-header-cell *matHeaderCellDef>
+                <strong> ACCIONES </strong>
+              </th>
+              <td style="text-align: center" mat-cell *matCellDef="let item">
+                <!-- Editar -->
+                <a color="primary" mat-button>
+                  <mat-icon color="primary" title="Editar">edit</mat-icon>
+                </a>
+                <!-- Eliminar -->
+                <a color="primary" mat-button (click)="deleteRiesgo(item)">
+                  <mat-icon color="primary" title="Eliminar">delete</mat-icon>
+                </a>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+            <!-- Row shown when there is no matching data. -->
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell" colspan="4">
+                No hay datos que coincidan con el filtro. "{{ input.value }}"
+              </td>
+            </tr>
+          </table>
+
+          <mat-paginator
+            [pageSize]="5"
+            [pageSizeOptions]="[5, 10, 25, 100]"
+          ></mat-paginator>
+        </div>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-container>

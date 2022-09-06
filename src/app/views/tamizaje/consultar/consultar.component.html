@@ -1,0 +1,154 @@
+<c-container>
+    <c-col xs="12">
+        <img src="../../../../assets/img/brand/icono-nuevo-paciente.png" alt="" srcset="" />
+    </c-col>
+    <c-col xs="12">
+        <c-card class="mb-4">
+            <c-card-header>
+                <form [formGroup]="formulario" novalidate cForm>
+                    <c-row>
+                        <c-col>
+                            <mat-form-field appearance="legacy" class="example-container">
+                                <mat-label>Nº. Identificación</mat-label>
+                                <input formControlName="identificacion" matInput (keyup)="applyFilter($event)"
+                                    placeholder="Ej. 1061778888" #input />
+                            </mat-form-field>
+
+                            <!-- <input aria-label="sm input example" cFormControl placeholder="Identificacion" type="text"
+                              formControlName="identificacion" (keyup)="filtrarData()" /> -->
+                        </c-col>
+                        <c-col>
+                            <!-- Tipo de Identificación -->
+                            <mat-form-field appearance="legacy">
+                                <mat-label for="tipoId">
+                                    <mat-icon>group_work</mat-icon> Tipo de Identificación:
+                                </mat-label>
+                                <mat-select (selectionChange)="filtrarPorTipoIdentificacion($event.value)"
+                                    formControlName="tipoId">
+                                    <mat-option value="">-- Seleccione -- </mat-option>
+                                    <mat-option *ngFor="let tipo of tiposDeDocumento" [value]="tipo.Abreviatura">
+                                        {{ tipo.Descripcion }}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+
+                        </c-col>
+                        <c-col>
+                            <!-- Rango de Fecha: Desde | Hasta -->
+                            <mat-form-field appearance="legacy" class="example-container">
+                                <mat-label>
+                                    <mat-icon>beenhere</mat-icon> Rango: Desde | Hasta
+                                </mat-label>
+                                <mat-date-range-input [formGroup]="rangoFechasTamizajes" [rangePicker]="picker"
+                                    [min]="minDate" [max]="maxDate">
+                                    <input matStartDate formControlName="start" placeholder="Start date">
+                                    <input matEndDate formControlName="end" placeholder="End date">
+                                </mat-date-range-input>
+                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-date-range-picker #picker></mat-date-range-picker>
+
+                            </mat-form-field>
+
+                        </c-col>
+
+                        <c-col>
+                            <div style="text-align: right">
+                                <!-- Limpiar -->
+                                <button style="margin-right: 5px" mat-raised-button color="info"
+                                    (click)="limpiarFiltros()">
+                                    <mat-icon>clear</mat-icon> Limpiar
+                                </button>
+
+                                <!-- Nuevo -->
+                                <!-- <button mat-raised-button color="primary" routerLink="/tamizaje/crear">
+                                    <mat-icon>add</mat-icon> Nuevo
+                                </button> -->
+                            </div>
+                        </c-col>
+                    </c-row>
+                </form>
+            </c-card-header>
+            <c-card-body>
+
+                <!-- Table New -->
+                <div class="mat-elevation-z8">
+                    <table mat-table [dataSource]="dataSource" matSort>
+                        <!-- Identificacion Column -->
+                        <ng-container matColumnDef="Identificacion">
+                            <th mat-header-cell *matHeaderCellDef>
+                                <strong> IDENTIFICACIÓN </strong>
+                            </th>
+                            <td mat-cell *matCellDef="let item">
+                                {{ item.per_identificacion }}
+                            </td>
+                        </ng-container>
+
+                        <!-- Nombres Column -->
+                        <!--  <ng-container matColumnDef="Nombre & Apellido">
+                          <th mat-header-cell *matHeaderCellDef>
+                              <strong> NOMBRE & APELLIDO </strong>
+                          </th>
+                          <td mat-cell *matCellDef="let item">
+                              {{ item?.per_primer_nombre | titlecase }}
+                          </td>
+                      </ng-container> -->
+
+                        <!-- Fecha Column -->
+                        <ng-container matColumnDef="Fecha">
+                            <th mat-header-cell *matHeaderCellDef>
+                                <strong> FECHA </strong>
+                            </th>
+                            <td mat-cell *matCellDef="let item">
+                                {{ item.tam_fecha | date: 'dd/MM/yyyy' }}
+                            </td>
+                        </ng-container>
+
+                        <!-- Mensaje Column -->
+                        <ng-container matColumnDef="Mensaje">
+                            <th mat-header-cell *matHeaderCellDef>
+                                <strong> MENSAJE </strong>
+                            </th>
+                            <td mat-cell *matCellDef="let item">
+                                {{ item.niv_mensaje | titlecase }}
+                            </td>
+                        </ng-container>
+
+                        <!-- Acciones Column -->
+                        <ng-container matColumnDef="Acciones">
+                            <th style="text-align: center" mat-header-cell *matHeaderCellDef>
+                                <strong> ACCIONES </strong>
+                            </th>
+                            <td style="text-align: center" mat-cell *matCellDef="let item">
+
+                                <!-- Nuevo Tamizaje -->
+                                <a [routerLink]="['/tamizaje/duplicado', item.per_identificacion, item.tam_id, item.tam_contraste, item.tam_vph]"
+                                    color="primary" mat-button>
+                                    <mat-icon style="color: #00838f" title="Nuevo Tamizaje">add_to_photos</mat-icon>
+                                </a>
+
+                                <!-- Detalle Tamizajes -->
+                                <a (click)="verDetalleTamizaje(item)" color="primary" mat-button>
+                                    <mat-icon color="primary" title="Ver Detalles">arrow_forward</mat-icon>
+                                </a>
+
+                            </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+                        <!-- Row shown when there is no matching data. -->
+                        <tr class="mat-row" *matNoDataRow>
+                            <td class="mat-cell" colspan="4">
+                                No hay datos que coincidan con el filtro. "{{ input.value }}"
+                            </td>
+                        </tr>
+                    </table>
+
+                    <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+                </div>
+
+            </c-card-body>
+        </c-card>
+
+    </c-col>
+</c-container>

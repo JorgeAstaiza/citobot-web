@@ -1,0 +1,54 @@
+<div class="wrapper">
+    <div class="login-text">
+        <button class="cta">
+        </button>
+
+    </div>
+    <div class="call-text">
+
+        <h1>Bienvenido a <span>Citobot</span></h1>
+        <br>
+        <form [formGroup]="formulario" cForm>
+
+            <!-- E-mail -->
+            <c-row>
+                <c-col>
+                    <mat-form-field appearance="legacy" class="example-container">
+                        <mat-label for="usu_email">
+                            <mat-icon>mail</mat-icon> Correo:
+                        </mat-label>
+                        <input formControlName="usu_email" type="email" matInput #input
+                            placeholder="Ej. sk@gmail.com" />
+                    </mat-form-field>
+
+                </c-col>
+            </c-row>
+
+            <!-- Clave -->
+            <c-row>
+                <c-col>
+                    <mat-form-field appearance="legacy" class="example-container">
+                        <mat-label for="usu_clave">
+                            <mat-icon> vpn_key</mat-icon> Contraseña:
+                        </mat-label>
+                        <input formControlName="usu_clave" matInput [type]="hide ? 'password' : 'text'" maxlength="15"
+                            autocomplete="new-password">
+                        <button type="button" mat-icon-button matSuffix (click)="hide = !hide"
+                            [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                            <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                        </button>
+                    </mat-form-field>
+
+                </c-col>
+            </c-row>
+
+            <button class="button-iniciar" (click)="loginUser()">Iniciar</button>
+
+        </form>
+
+
+
+
+    </div>
+
+</div>

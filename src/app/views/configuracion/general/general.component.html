@@ -1,0 +1,71 @@
+<c-container>
+    <c-col xs="12">
+        <img src="../../../../assets/img/brand/icono-nuevo-paciente.png" />
+    </c-col>
+
+    <c-col xs="12">
+        <form [formGroup]="formulario" (ngSubmit)="save()" novalidate cForm>
+
+            <c-card class="mb-4">
+
+                <c-card-header style="height: 78px;">
+
+                    <c-row>
+
+                        <c-col style="padding-top: 20px;">
+                            <strong>
+                                Configuración
+                            </strong>
+                        </c-col>
+
+                        <c-col>
+                            <div style="text-align: right;">
+
+                                <button mat-raised-button color="primary" type="submit" disabled>
+                                    <mat-icon>save</mat-icon> Guardar
+                                </button>
+
+                            </div>
+                        </c-col>
+
+                    </c-row>
+
+                </c-card-header>
+
+                <c-card-body>
+
+                    <!-- Mat Table -->
+                    <div class="mat-elevation-z8">
+
+                        <table cellspacing="0">
+
+                            <!-- Configurar VPH -->
+                            <tr>
+                                <td> Habilitar Vph </td>
+                                <td>
+                                    <mat-slide-toggle formControlName="vph">
+                                        {{isCheckedVph === true ? '( SI )' : '( NO )'}}
+                                    </mat-slide-toggle>
+                                </td>
+                            </tr>
+
+                            <!-- Configurar Camara -->
+                            <!--  <tr>
+                                        <td> Habilitar Camara </td>
+                                        <td>
+                                            <mat-slide-toggle formControlName="camara">
+                                                {{isCheckedCamara ? '( SI )' : '( NO )'}}
+                                            </mat-slide-toggle>
+                                        </td>
+                                    </tr> -->
+
+                        </table>
+
+                    </div>
+
+                </c-card-body>
+            </c-card>
+        </form>
+
+    </c-col>
+</c-container>

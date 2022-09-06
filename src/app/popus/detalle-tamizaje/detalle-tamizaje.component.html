@@ -1,0 +1,29 @@
+<mat-card class="example-card">
+    <mat-card-header>
+        <div mat-card-avatar class="example-header-image"></div>
+        <mat-card-title>
+            {{ data.Tamizaje.per_tip_id }}: {{ data.Tamizaje.per_identificacion }}
+        </mat-card-title>
+        <mat-card-subtitle>{{ data.NombrePaciente | titlecase }}</mat-card-subtitle>
+    </mat-card-header>
+    <img class="img_tarjeta" mat-card-image src="{{ imgFromFtp ? imgFromFtp : 'assets/img/brand/svg-spinner.svg' }}" />
+    <mat-card-content>
+        <ul>
+            <li>
+                <strong>Fecha:</strong>
+                {{ data.Tamizaje.tam_fecha | date: "dd/MM/yyyy" }}
+            </li>
+            <li><strong>Contraste:</strong> {{ data.Tamizaje.tam_contraste }}</li>
+            <li><strong>Vph: </strong> {{ data.Tamizaje.tam_vph }}</li>
+            <!-- 
+            <li><strong>Nivel: </strong> {{ data.Tamizaje.tam_niv_id }}</li>
+            <li><strong>Mensaje: </strong> {{ data.Tamizaje.niv_mensaje }}</li> 
+            -->
+        </ul>
+    </mat-card-content>
+    <mat-card-actions style="text-align: center">
+        <button (click)="onNoClick()" mat-button>
+            <mat-icon>clear</mat-icon> Cerrar
+        </button>
+    </mat-card-actions>
+</mat-card>

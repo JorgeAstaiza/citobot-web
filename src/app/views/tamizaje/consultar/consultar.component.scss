@@ -1,0 +1,41 @@
+table {
+  width: 100%;
+}
+
+mat-form-field {
+  font-size: 15px;
+  width: 100%;
+}
+
+.ctn-filtro {
+  display: flex;
+  justify-content: space-around;
+  padding: 15px 0;
+
+  input,
+  select {
+    margin-right: 15px;
+  }
+}
+
+.ctn-detalle-paciente {
+  background-color: rgb(226, 226, 226);
+  border-radius: 20px;
+
+  &__flex {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.ctn-detalle-tamizaje {
+  border-radius: 20px;
+  border: 1px solid rgb(63, 63, 63);
+  text-align: center;
+  padding: 3px;
+}
+
+.btn-info {
+  color: #fff;
+}

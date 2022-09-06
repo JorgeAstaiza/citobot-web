@@ -1,0 +1,46 @@
+table {
+    width: 100%;
+}
+
+mat-form-field {
+    font-size: 15px;
+    width: 100%;
+}
+
+.ctn-filtro {
+    display: flex;
+    justify-content: space-around;
+    padding: 15px 0;
+
+    input,
+    select {
+        margin-right: 15px;
+    }
+}
+
+.blancoVerde {
+    border-radius: 4px;
+    padding: 2px 10px;
+    display: inline;
+    font-size: .8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: #fff;
+    background: rgb(2, 114, 2, .8);
+}
+
+.blancoRojo {
+    border-radius: 4px;
+    padding: 2px 10px;
+    display: inline;
+    font-size: .8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: #fff;
+    background-color: rgba(114, 2, 26, 0.8);
+
+}
+
+.btn-info {
+    color: #fff;
+}

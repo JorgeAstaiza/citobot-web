@@ -1,0 +1,59 @@
+<c-container>
+  <mat-card>
+    <c-col xs="12">
+      <c-card>
+        <c-card-header>
+          <c-row>
+            <h5>Datos Básicos</h5>
+          </c-row>
+        </c-card-header>
+      </c-card>
+    </c-col>
+
+    <mat-card>
+      <c-row>
+        <c-col>
+          <div class="mb-3">
+            <!-- Mensaje riesgo -->
+            <mat-form-field appearance="legacy" class="example-container">
+              <mat-label for="mensake">
+                <mat-icon>text_format</mat-icon> Mensaje:
+              </mat-label>
+
+              <input
+                style="text-transform: uppercase"
+                [formControl]="niv_mensaje"
+                type="text"
+                matInput
+                #input
+              />
+            </mat-form-field>
+          </div>
+        </c-col>
+        <c-col>
+          <div class="mb-3">
+            <!-- Descripcion -->
+            <mat-form-field appearance="legacy" class="example-container">
+              <mat-label for="SegundoNombre">
+                <mat-icon>text_format</mat-icon> Descripcion:
+              </mat-label>
+
+              <input
+                style="text-transform: uppercase"
+                [formControl]="niv_descripcion"
+                type="text"
+                matInput
+                #input
+              />
+            </mat-form-field>
+          </div>
+        </c-col>
+      </c-row>
+    </mat-card>
+    <br />
+    <button mat-raised-button color="primary" (click)="saveRiesgo()">
+      <mat-icon>save</mat-icon> Guardar
+    </button>
+  </mat-card>
+</c-container>
+<!-- <c-toaster class="p-3" position="fixed" [placement]="placement"></c-toaster> -->
