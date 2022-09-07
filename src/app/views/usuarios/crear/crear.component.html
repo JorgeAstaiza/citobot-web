@@ -1,251 +1,286 @@
 <c-container>
-    <c-col xs="12">
-        <img src="../../../../assets/img/brand/icono-nuevo-paciente.png" alt="" srcset="" />
-    </c-col>
+  <c-col xs="12">
+    <img
+      src="../../../../assets/img/brand/icono-nuevo-paciente.png"
+      alt=""
+      srcset=""
+    />
+  </c-col>
 
-    <mat-card>
+  <mat-card>
+    <form [formGroup]="formulario" (ngSubmit)="save()" novalidate cForm>
+      <c-col xs="12">
+        <c-card>
+          <c-card-header>
+            <c-row>
+              <h5>Datos Básicos</h5>
+            </c-row>
+          </c-card-header>
+        </c-card>
+      </c-col>
 
-        <form [formGroup]="formulario" (ngSubmit)="save()" novalidate cForm>
+      <mat-card>
+        <c-row>
+          <c-col>
+            <div class="mb-3">
+              <!-- Primer Nombre -->
+              <mat-form-field appearance="legacy" class="example-container">
+                <mat-label for="PrimerNombre">
+                  <mat-icon>text_format</mat-icon> Primer Nombre:
+                </mat-label>
 
-            <c-col xs="12">
-                <c-card>
-                    <c-card-header>
-                        <c-row>
-                            <h5>Datos Básicos</h5>
-                        </c-row>
-                    </c-card-header>
-                </c-card>
-            </c-col>
+                <input
+                  style="text-transform: uppercase"
+                  formControlName="per_primer_nombre"
+                  type="text"
+                  matInput
+                  #input
+                  maxlength="20"
+                />
+              </mat-form-field>
+            </div>
+          </c-col>
+          <c-col>
+            <div class="mb-3">
+              <!-- Segundo Nombre -->
+              <mat-form-field appearance="legacy" class="example-container">
+                <mat-label for="SegundoNombre">
+                  <mat-icon>text_format</mat-icon> Segundo Nombre:
+                </mat-label>
 
-            <mat-card>
+                <input
+                  style="text-transform: uppercase"
+                  formControlName="per_otros_nombres"
+                  type="text"
+                  matInput
+                  #input
+                  maxlength="20"
+                />
+              </mat-form-field>
+            </div>
+          </c-col>
+        </c-row>
 
-                <c-row>
-                    <c-col>
-                        <div class="mb-3">
+        <c-row>
+          <c-col>
+            <div class="mb-3">
+              <!-- Primer Apellido -->
+              <mat-form-field appearance="legacy" class="example-container">
+                <mat-label for="PrimerApellido">
+                  <mat-icon>text_format</mat-icon> Primer Apellido:
+                </mat-label>
 
-                            <!-- Primer Nombre -->
-                            <mat-form-field appearance="legacy" class="example-container">
-                                <mat-label for="PrimerNombre">
-                                    <mat-icon>text_format</mat-icon> Primer Nombre:
-                                </mat-label>
+                <input
+                  style="text-transform: uppercase"
+                  formControlName="per_primer_apellido"
+                  type="text"
+                  matInput
+                  #input
+                  maxlength="20"
+                />
+              </mat-form-field>
+            </div>
+          </c-col>
+          <c-col>
+            <div class="mb-3">
+              <!-- Segundo Apellido -->
+              <mat-form-field appearance="legacy" class="example-container">
+                <mat-label for="SegundoApellido">
+                  <mat-icon>text_format</mat-icon> Segundo Apellido:
+                </mat-label>
 
-                                <input style="text-transform: uppercase;" formControlName="per_primer_nombre"
-                                    type="text" matInput #input maxlength="10" />
-                            </mat-form-field>
+                <input
+                  style="text-transform: uppercase"
+                  formControlName="per_segundo_apellido"
+                  type="text"
+                  matInput
+                  #input
+                  maxlength="20"
+                />
+              </mat-form-field>
+            </div>
+          </c-col>
+        </c-row>
 
-                        </div>
-                    </c-col>
-                    <c-col>
-                        <div class="mb-3">
+        <c-row>
+          <c-col>
+            <div class="mb-3">
+              <!-- Tipo de Identificación -->
+              <mat-form-field appearance="legacy">
+                <mat-label for="per_tip_id">
+                  <mat-icon>group_work</mat-icon> Tipo de Identificación:
+                </mat-label>
+                <mat-select formControlName="per_tip_id">
+                  <mat-option value="">-- Seleccione -- </mat-option>
+                  <mat-option
+                    *ngFor="let tipo of tiposDeDocumento"
+                    [value]="tipo.Abreviatura"
+                  >
+                    {{ tipo.Descripcion }}</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </c-col>
+          <c-col>
+            <div class="mb-3">
+              <!-- Identificación -->
+              <mat-form-field appearance="legacy">
+                <mat-label for="per_identificacion">
+                  <mat-icon>sell</mat-icon> Nº. de Identificación:
+                </mat-label>
+                <input
+                  formControlName="per_identificacion"
+                  type="text"
+                  matInput
+                  #input
+                />
+              </mat-form-field>
+            </div>
+          </c-col>
+        </c-row>
+      </mat-card>
+      <br />
 
-                            <!-- Segundo Nombre -->
-                            <mat-form-field appearance="legacy" class="example-container">
-                                <mat-label for="SegundoNombre">
-                                    <mat-icon>text_format</mat-icon> Segundo Nombre:
-                                </mat-label>
+      <c-col xs="12">
+        <c-card>
+          <c-card-header>
+            <c-row>
+              <h5>Datos Privados</h5>
+            </c-row>
+          </c-card-header>
+        </c-card>
+      </c-col>
 
-                                <input style="text-transform: uppercase;" formControlName="per_otros_nombres"
-                                    type="text" matInput #input maxlength="10" />
-                            </mat-form-field>
+      <mat-card>
+        <c-row>
+          <c-col>
+            <div class="mb-3">
+              <!-- Rol -->
+              <mat-form-field appearance="legacy">
+                <mat-label for="usu_rol">
+                  <mat-icon>layers</mat-icon> Rol:
+                </mat-label>
+                <mat-select formControlName="usu_rol">
+                  <mat-option value="">-- Seleccione -- </mat-option>
+                  <mat-option *ngFor="let rol of selectRol" [value]="rol">
+                    {{ rol }}</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </c-col>
+          <c-col>
+            <div class="mb-3">
+              <!-- Usuario -->
+              <mat-form-field appearance="legacy" class="example-container">
+                <mat-label for="usu_usuario">
+                  <mat-icon>face</mat-icon> Usuario:
+                </mat-label>
 
-                        </div>
-                    </c-col>
-                </c-row>
+                <input
+                  formControlName="usu_usuario"
+                  type="text"
+                  matInput
+                  #input
+                  maxlength="15"
+                  autocomplete="new-text"
+                />
+              </mat-form-field>
+            </div>
+          </c-col>
+          <c-col>
+            <div class="mb-3" *ngIf="!esActualizar">
+              <!-- Clave -->
+              <mat-form-field appearance="legacy" class="example-container">
+                <mat-label for="usu_clave"> Contraseña:</mat-label>
+                <input
+                  formControlName="usu_clave"
+                  matInput
+                  [type]="hide ? 'password' : 'text'"
+                  maxlength="15"
+                  autocomplete="new-password"
+                />
+                <button
+                  type="button"
+                  mat-icon-button
+                  matSuffix
+                  (click)="hide = !hide"
+                  [attr.aria-label]="'Hide password'"
+                  [attr.aria-pressed]="hide"
+                >
+                  <mat-icon>{{
+                    hide ? "visibility_off" : "visibility"
+                  }}</mat-icon>
+                </button>
+              </mat-form-field>
+            </div>
+          </c-col>
+        </c-row>
 
-                <c-row>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Primer Apellido -->
-                            <mat-form-field appearance="legacy" class="example-container">
-                                <mat-label for="PrimerApellido">
-                                    <mat-icon>text_format</mat-icon> Primer Apellido:
-                                </mat-label>
-
-                                <input style="text-transform: uppercase;" formControlName="per_primer_apellido"
-                                    type="text" matInput #input maxlength="10" />
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Segundo Apellido -->
-                            <mat-form-field appearance="legacy" class="example-container">
-                                <mat-label for="SegundoApellido">
-                                    <mat-icon>text_format</mat-icon> Segundo Apellido:
-                                </mat-label>
-
-                                <input style="text-transform: uppercase;" formControlName="per_segundo_apellido"
-                                    type="text" matInput #input maxlength="10" />
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                </c-row>
-
-                <c-row>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Tipo de Identificación -->
-                            <mat-form-field appearance="legacy">
-                                <mat-label for="per_tip_id">
-                                    <mat-icon>group_work</mat-icon> Tipo de Identificación:
-                                </mat-label>
-                                <mat-select formControlName="per_tip_id">
-                                    <mat-option value="">-- Seleccione -- </mat-option>
-                                    <mat-option *ngFor="let tipo of tiposDeDocumento" [value]="tipo.Abreviatura">
-                                        {{tipo.Descripcion}}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Identificación -->
-                            <mat-form-field appearance="legacy">
-                                <mat-label for="per_identificacion">
-                                    <mat-icon>sell</mat-icon> Nº. de Identificación:
-                                </mat-label>
-                                <input formControlName="per_identificacion" type="text" matInput #input />
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                </c-row>
-
-            </mat-card>
-            <br>
-
-            <c-col xs="12">
-                <c-card>
-                    <c-card-header>
-                        <c-row>
-                            <h5>Datos Privados</h5>
-                        </c-row>
-                    </c-card-header>
-                </c-card>
-            </c-col>
-
-            <mat-card>
-
-                <c-row>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Rol -->
-                            <mat-form-field appearance="legacy">
-                                <mat-label for="usu_rol">
-                                    <mat-icon>layers</mat-icon> Rol:
-                                </mat-label>
-                                <mat-select formControlName="usu_rol">
-                                    <mat-option value="">-- Seleccione -- </mat-option>
-                                    <mat-option *ngFor="let rol of selectRol" [value]="rol">
-                                        {{ rol }}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Usuario -->
-                            <mat-form-field appearance="legacy" class="example-container">
-                                <mat-label for="usu_usuario">
-                                    <mat-icon>face</mat-icon> Usuario:
-                                </mat-label>
-
-                                <input formControlName="usu_usuario" type="text" matInput #input maxlength="15"
-                                    autocomplete="new-text" />
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                    <c-col>
-                        <div class="mb-3" *ngIf="!esActualizar">
-
-                            <!-- Clave -->
-                            <mat-form-field appearance="legacy" class="example-container">
-                                <mat-label for="usu_clave"> Contraseña:</mat-label>
-                                <input formControlName="usu_clave" matInput [type]="hide ? 'password' : 'text'"
-                                    maxlength="15" autocomplete="new-password">
-                                <button type="button" mat-icon-button matSuffix (click)="hide = !hide"
-                                    [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
-                                    <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
-                                </button>
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                </c-row>
-
-                <c-row>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- E-mail -->
-                            <mat-form-field appearance="legacy" class="example-container">
-                                <mat-label for="usu_email">
-                                    <mat-icon>mail</mat-icon> Correo:
-                                </mat-label>
-                                <input formControlName="usu_email" type="email" matInput #input
-                                    placeholder="Ej. sk@gmail.com" />
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Profesión -->
-                            <mat-form-field appearance="legacy">
-                                <mat-label for="pro_nombre">
-                                    <mat-icon>group_work</mat-icon> Profesión:
-                                </mat-label>
-                                <mat-select formControlName="pro_nombre">
-                                    <mat-option value="">-- Seleccione -- </mat-option>
-                                    <mat-option *ngFor="let profesion of selectProfesiones"
-                                        [value]="profesion.pro_nombre">
-                                        {{ profesion.pro_nombre }}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Estado -->
-                            <mat-form-field appearance="legacy">
-                                <mat-label for="usu_estado">
-                                    <mat-icon>nights_stay</mat-icon> Estado:
-                                </mat-label>
-                                <mat-select formControlName="usu_estado">
-                                    <mat-option value="">-- Seleccione -- </mat-option>
-                                    <mat-option *ngFor="let estado of selectEstado" [value]="estado">
-                                        {{ estado }}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                </c-row>
-
-            </mat-card>
-            <br>
-            <button mat-raised-button color="primary" type="submit">
-                <mat-icon>save</mat-icon> Guardar
-            </button>
-
-        </form>
-
-    </mat-card>
-
+        <c-row>
+          <c-col>
+            <div class="mb-3">
+              <!-- E-mail -->
+              <mat-form-field appearance="legacy" class="example-container">
+                <mat-label for="usu_email">
+                  <mat-icon>mail</mat-icon> Correo:
+                </mat-label>
+                <input
+                  formControlName="usu_email"
+                  type="email"
+                  matInput
+                  #input
+                  placeholder="Ej. sk@gmail.com"
+                />
+              </mat-form-field>
+            </div>
+          </c-col>
+          <c-col>
+            <div class="mb-3">
+              <!-- Profesión -->
+              <mat-form-field appearance="legacy">
+                <mat-label for="pro_nombre">
+                  <mat-icon>group_work</mat-icon> Profesión:
+                </mat-label>
+                <mat-select formControlName="pro_nombre">
+                  <mat-option value="">-- Seleccione -- </mat-option>
+                  <mat-option
+                    *ngFor="let profesion of selectProfesiones"
+                    [value]="profesion.pro_nombre"
+                  >
+                    {{ profesion.pro_nombre }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </c-col>
+          <c-col>
+            <div class="mb-3">
+              <!-- Estado -->
+              <mat-form-field appearance="legacy">
+                <mat-label for="usu_estado">
+                  <mat-icon>nights_stay</mat-icon> Estado:
+                </mat-label>
+                <mat-select formControlName="usu_estado">
+                  <mat-option value="">-- Seleccione -- </mat-option>
+                  <mat-option
+                    *ngFor="let estado of selectEstado"
+                    [value]="estado"
+                  >
+                    {{ estado }}</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </c-col>
+        </c-row>
+      </mat-card>
+      <br />
+      <button mat-raised-button color="primary" type="submit">
+        <mat-icon>save</mat-icon> Guardar
+      </button>
+    </form>
+  </mat-card>
 </c-container>
 <c-toaster class="p-3" position="fixed" [placement]="placement"></c-toaster>

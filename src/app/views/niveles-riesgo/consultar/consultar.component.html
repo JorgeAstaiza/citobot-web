@@ -83,7 +83,12 @@
               <td style="text-align: center" mat-cell *matCellDef="let item">
                 <!-- Editar -->
                 <a color="primary" mat-button>
-                  <mat-icon color="primary" title="Editar">edit</mat-icon>
+                  <mat-icon
+                    color="primary"
+                    title="Editar"
+                    (click)="editarRiesgo(item)"
+                    >edit</mat-icon
+                  >
                 </a>
                 <!-- Eliminar -->
                 <a color="primary" mat-button (click)="deleteRiesgo(item)">

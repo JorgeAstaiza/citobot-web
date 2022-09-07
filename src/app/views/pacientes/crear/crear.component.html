@@ -1,624 +1,717 @@
 <c-container>
-    <c-col xs="12">
-        <img src="../../../../assets/img/brand/icono-nuevo-paciente.png" alt="" srcset="" />
-    </c-col>
-
-    <mat-card>
-
-        <form [formGroup]="formulario" (ngSubmit)="save()" novalidate cForm>
-
-            <c-col xs="12">
-                <c-card>
-                    <c-card-header>
-                        <c-row>
-                            <h5>Datos Básicos</h5>
-                        </c-row>
-                    </c-card-header>
-                </c-card>
-            </c-col>
-
-            <mat-card>
-
-                <c-row>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Primer Nombre -->
-                            <mat-form-field appearance="legacy" class="example-container">
-                                <mat-label for="PrimerNombre">
-                                    <mat-icon>text_format</mat-icon> Primer Nombre:
-                                </mat-label>
-
-                                <input style="text-transform: uppercase;" formControlName="per_primer_nombre"
-                                    type="text" matInput #input maxlength="10" />
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Segundo Nombre -->
-                            <mat-form-field appearance="legacy" class="example-container">
-                                <mat-label for="SegundoNombre">
-                                    <mat-icon>text_format</mat-icon> Segundo Nombre:
-                                </mat-label>
-
-                                <input style="text-transform: uppercase;" formControlName="per_otros_nombres"
-                                    type="text" matInput #input maxlength="10" />
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                </c-row>
-
-                <c-row>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Primer Apellido -->
-                            <mat-form-field appearance="legacy" class="example-container">
-                                <mat-label for="PrimerApellido">
-                                    <mat-icon>text_format</mat-icon> Primer Apellido:
-                                </mat-label>
-
-                                <input style="text-transform: uppercase;" formControlName="per_primer_apellido"
-                                    type="text" matInput #input maxlength="10" />
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Segundo Apellido -->
-                            <mat-form-field appearance="legacy" class="example-container">
-                                <mat-label for="SegundoApellido">
-                                    <mat-icon>text_format</mat-icon> Segundo Apellido:
-                                </mat-label>
-
-                                <input style="text-transform: uppercase;" formControlName="per_segundo_apellido"
-                                    type="text" matInput #input maxlength="10" />
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                </c-row>
-
-                <c-row>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Dirección -->
-                            <mat-form-field appearance="legacy" class="example-container">
-                                <mat-label for="Direccion">
-                                    <mat-icon>location_on</mat-icon> Dirección:
-                                </mat-label>
-
-                                <input style="text-transform: uppercase;" formControlName="pac_direccion" type="text"
-                                    matInput #input maxlength="50" />
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Fecha Nacimiento -->
-                            <mat-form-field appearance="legacy" class="example-container">
-                                <mat-label for="FechaNacimiento">
-                                    <mat-icon>beenhere</mat-icon> Fecha Nacimiento:
-                                </mat-label>
-                                <input formControlName="pac_fecha_nacimiento" [max]="todayDate" matInput
-                                    [matDatepicker]="picker" placeholder="dd/mm/yyyy">
-                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                                <mat-datepicker #picker></mat-datepicker>
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- E-mail -->
-                            <mat-form-field appearance="legacy" class="example-container">
-                                <mat-label for="Email">
-                                    <mat-icon>mail</mat-icon> Correo:
-                                </mat-label>
-                                <input formControlName="pac_correo" type="email" matInput #input
-                                    placeholder="Ej. sk@gmail.com" />
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                </c-row>
-
-                <c-row>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Tipo de Identificación -->
-                            <mat-form-field appearance="legacy">
-                                <mat-label for="per_tip_id">
-                                    <mat-icon>group_work</mat-icon> Tipo de Identificación:
-                                </mat-label>
-                                <mat-select formControlName="per_tip_id">
-                                    <mat-option value="">-- Seleccione -- </mat-option>
-                                    <mat-option *ngFor="let tipo of tiposDeDocumento" [value]="tipo.Abreviatura">
-                                        {{tipo.Descripcion}}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Identificación -->
-                            <mat-form-field appearance="legacy">
-                                <mat-label for="per_identificacion">
-                                    <mat-icon>sell</mat-icon> Nº. de Identificación:
-                                </mat-label>
-                                <input formControlName="per_identificacion" type="text" matInput #input />
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Nº. Celular -->
-                            <mat-form-field appearance="legacy">
-                                <mat-label for="pac_celular">
-                                    <mat-icon>phone</mat-icon> Nº. de Celular:
-                                </mat-label>
-                                <input formControlName="pac_celular" type="text" matInput #input />
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                </c-row>
-
-                <c-row>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Nº. Celular -->
-                            <mat-form-field appearance="legacy">
-                                <mat-label for="pac_telefono">
-                                    <mat-icon>phone</mat-icon> Nº. Telefónico:
-                                </mat-label>
-                                <input formControlName="pac_telefono" type="text" matInput #input />
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Nivel Educativo -->
-                            <mat-form-field appearance="legacy">
-                                <mat-label for="pac_nivel_educacion">
-                                    <mat-icon>school</mat-icon> Nivel Educativo:
-                                </mat-label>
-                                <mat-select formControlName="pac_nivel_educacion">
-                                    <mat-option *ngFor="let level of selectEducationLeve" [value]="level">
-                                        {{level | titlecase}}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Estado Civil -->
-                            <mat-form-field appearance="legacy">
-                                <mat-label for="pac_estado_civil">
-                                    <mat-icon>person</mat-icon> Estado Civil:
-                                </mat-label>
-                                <mat-select formControlName="pac_estado_civil">
-                                    <mat-option *ngFor="let marital of selectMaritalStatus" [value]="marital">
-                                        {{marital}}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                </c-row>
-
-                <c-row>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Situación Laboral -->
-                            <mat-form-field appearance="legacy">
-                                <mat-label for="pac_situacion_laboral">
-                                    <mat-icon>local_mall</mat-icon> Situación Laboral:
-                                </mat-label>
-                                <mat-select formControlName="pac_situacion_laboral">
-                                    <mat-option *ngFor="let status of selectLaboralStatus" [value]="status">
-                                        {{status | titlecase}}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Régimen de Salud -->
-                            <mat-form-field appearance="legacy">
-                                <mat-label for="pac_regimen_salud">
-                                    <mat-icon>local_hospital</mat-icon> Régimen de Salud:
-                                </mat-label>
-                                <mat-select formControlName="pac_regimen_salud">
-                                    <mat-option *ngFor="let regimen of selectRegimenSalud" [value]="regimen">
-                                        {{regimen | titlecase}}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Estrato -->
-                            <mat-form-field appearance="legacy" class="example-container">
-                                <mat-label for="pac_estrato">
-                                    <mat-icon> show_chart</mat-icon> Estrato:
-                                </mat-label>
-
-                                <input formControlName="pac_estrato" type="number" matInput #input maxlength="1" />
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                </c-row>
-
-            </mat-card>
-            <br>
-
-            <c-col xs="12">
-                <c-card>
-                    <c-card-header>
-                        <c-row>
-                            <h5>Datos Salud</h5>
-                        </c-row>
-                    </c-card-header>
-                </c-card>
-            </c-col>
-
-
-            <mat-card>
-
-                <c-row>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Diabetes -->
-                            <mat-form-field appearance="legacy">
-                                <mat-label for="pac_diabetes">
-                                    <mat-icon>transgender</mat-icon> Diabetes:
-                                </mat-label>
-                                <mat-select formControlName="pac_diabetes">
-                                    <mat-option *ngFor="let diabetes of selectDiabetes" [value]="diabetes">
-                                        {{diabetes}}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Fumador -->
-                            <mat-form-field appearance="legacy">
-                                <mat-label for="pac_fuma">
-                                    <mat-icon>smoking_rooms</mat-icon> Fumador:
-                                </mat-label>
-                                <mat-select formControlName="pac_fuma">
-                                    <mat-option *ngFor="let fumador of selectFuma" [value]="fumador">
-                                        {{fumador}}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Peso -->
-                            <mat-form-field appearance="legacy" class="example-container">
-                                <mat-label for="pac_peso">
-                                    <mat-icon>text_format</mat-icon> Peso (Kg):
-                                </mat-label>
-
-                                <input formControlName="pac_peso" type="number" matInput #input maxlength="1" />
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                </c-row>
-
-                <c-row>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Talla -->
-                            <mat-form-field appearance="legacy" class="example-container">
-                                <mat-label for="pac_talla">
-                                    <mat-icon>text_format</mat-icon> Talla:
-                                </mat-label>
-
-                                <input formControlName="pac_talla" type="number" matInput #input maxlength="10" />
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Primera Menstruación -->
-                            <mat-form-field appearance="legacy" class="example-container">
-                                <mat-label for="pac_primera_mestruacion">
-                                    <mat-icon>text_format</mat-icon> Primera Menstruación (Años):
-                                </mat-label>
-
-                                <input formControlName="pac_primera_mestruacion" type="number" matInput #input
-                                    maxlength="10" />
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Partos -->
-                            <mat-form-field appearance="legacy">
-                                <mat-label for="pac_partos">
-                                    <mat-icon>pregnant_woman</mat-icon> Partos:
-                                </mat-label>
-                                <mat-select formControlName="pac_partos">
-                                    <mat-option *ngFor="let partos of selectPartos" [value]="partos">
-                                        {{partos | titlecase}}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                </c-row>
-
-                <c-row>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Dispositivo Intrauterino -->
-                            <mat-form-field appearance="legacy">
-                                <mat-label for="pac_dispositivo_intrauterino">
-                                    <mat-icon>transgender</mat-icon> Dispositivo Intrauterino:
-                                </mat-label>
-                                <mat-select formControlName="pac_dispositivo_intrauterino">
-                                    <mat-option *ngFor="let dispoIntra of selectDispIntrauterino" [value]="dispoIntra">
-                                        {{dispoIntra}}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Tiempo Iserción -->
-                            <mat-form-field appearance="legacy">
-                                <mat-label for="pac_tiempo_insercion_DIU">
-                                    <mat-icon>transgender</mat-icon> Tiempo Inserción:
-                                </mat-label>
-                                <mat-select formControlName="pac_tiempo_insercion_DIU">
-                                    <mat-option *ngFor="let tiempo of selectTiempoInsercion" [value]="tiempo">
-                                        {{tiempo | titlecase}}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Anticonceptivos Orales -->
-                            <mat-form-field appearance="legacy">
-                                <mat-label for="pac_anticonceptivos_orales">
-                                    <mat-icon>transgender</mat-icon> Anticonceptivos Orales:
-                                </mat-label>
-                                <mat-select formControlName="pac_anticonceptivos_orales">
-                                    <mat-option *ngFor="let orales of selectAnticonceptivosOrales" [value]="orales">
-                                        {{orales}}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                </c-row>
-
-                <c-row>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Número de parejas sexuales -->
-                            <mat-form-field appearance="legacy" class="example-container">
-                                <mat-label for="pac_parejas_sexuales">
-                                    <mat-icon>wc</mat-icon> Nº. de Parejas Sexuales:
-                                </mat-label>
-
-                                <input formControlName="pac_parejas_sexuales" type="number" matInput #input
-                                    maxlength="10" />
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Relación con condón -->
-                            <mat-form-field appearance="legacy">
-                                <mat-label for="pac_relacion_condon">
-                                    <mat-icon>mood</mat-icon> Relación con condón:
-                                </mat-label>
-                                <mat-select formControlName="pac_relacion_condon">
-                                    <mat-option *ngFor="let condon of selectRelacionCondon" [value]="condon">
-                                        {{condon}}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Vacuna VPH -->
-                            <mat-form-field appearance="legacy">
-                                <mat-label for="pac_vacuna_vph">
-                                    <mat-icon>transgender</mat-icon> Vacuna VPH:
-                                </mat-label>
-                                <mat-select formControlName="pac_vacuna_vph">
-                                    <mat-option *ngFor="let vacuna of selectVacunaVph" [value]="vacuna">
-                                        {{vacuna | titlecase}}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                </c-row>
-
-                <c-row>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Última Citología -->
-                            <mat-form-field appearance="legacy">
-                                <mat-label for="pac_ultima_citologia">
-                                    <mat-icon>transgender</mat-icon> Última Citología:
-                                </mat-label>
-                                <mat-select formControlName="pac_ultima_citologia">
-                                    <mat-option *ngFor="let citologia of selectUltimaCitologia" [value]="citologia">
-                                        {{citologia}}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Prueba ADN VPH -->
-                            <mat-form-field appearance="legacy">
-                                <mat-label for="pac_prueba_ADN_VPH">
-                                    <mat-icon>transgender</mat-icon> Prueba ADN VPH:
-                                </mat-label>
-                                <mat-select formControlName="pac_prueba_ADN_VPH">
-                                    <mat-option *ngFor="let prueba of selectPruebaVPH" [value]="prueba">
-                                        {{prueba | titlecase}}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Menopausia -->
-                            <mat-form-field appearance="legacy">
-                                <mat-label for="pac_menopausia">
-                                    <mat-icon>transgender</mat-icon> Menopausia:
-                                </mat-label>
-                                <mat-select formControlName="pac_menopausia">
-                                    <mat-option *ngFor="let menopausia of selectMenopausia" [value]="menopausia">
-                                        {{menopausia}}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                </c-row>
-
-                <c-row>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Infecciones TS -->
-                            <mat-form-field appearance="legacy" class="example-container">
-                                <mat-label for="pac_infecciones_ts">
-                                    <mat-icon>text_format</mat-icon> Infecciones TS:
-                                </mat-label>
-
-                                <input style="text-transform: uppercase;" formControlName="pac_infecciones_ts"
-                                    type="text" matInput #input />
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Nombre Contácto Alternativo -->
-                            <mat-form-field appearance="legacy" class="example-container">
-                                <mat-label for="pac_contacto_alternativo">
-                                    <mat-icon>text_format</mat-icon> Nombre Contácto Alternativo:
-                                </mat-label>
-
-                                <input style="text-transform: uppercase;" formControlName="pac_contacto_alternativo"
-                                    type="text" matInput #input />
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Teléfono Contacto Alternativo -->
-                            <mat-form-field appearance="legacy" class="example-container">
-                                <mat-label for="pac_telefono_contacto_alternativo">
-                                    <mat-icon>text_format</mat-icon> Teléfono Contacto Alternativo:
-                                </mat-label>
-
-                                <input formControlName="pac_telefono_contacto_alternativo" type="text" matInput
-                                    #input />
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                </c-row>
-
-                <c-row>
-                    <c-col>
-                        <div class="mb-3">
-
-                            <!-- Eps -->
-                            <mat-form-field appearance="legacy">
-                                <mat-label for="pac_eps">
-                                    <mat-icon>local_hospital</mat-icon> Eps:
-                                </mat-label>
-                                <mat-select formControlName="eps_nombre">
-                                    <mat-option *ngFor="let eps of allEps" [value]="eps.eps_nombre">
-                                        {{eps.eps_nombre | titlecase}}</mat-option>
-                                </mat-select>
-                            </mat-form-field>
-
-                        </div>
-                    </c-col>
-                </c-row>
-
-            </mat-card>
-            <br>
-            <button mat-raised-button color="primary" type="submit">
-                <mat-icon>save</mat-icon> Guardar
-            </button>
-
-        </form>
-
-    </mat-card>
-
+  <c-col xs="12">
+    <img
+      src="../../../../assets/img/brand/icono-nuevo-paciente.png"
+      alt=""
+      srcset=""
+    />
+  </c-col>
+
+  <mat-card>
+    <form [formGroup]="formulario" (ngSubmit)="save()" novalidate cForm>
+      <c-col xs="12">
+        <c-card>
+          <c-card-header>
+            <c-row>
+              <h5>Datos Básicos</h5>
+            </c-row>
+          </c-card-header>
+        </c-card>
+      </c-col>
+
+      <mat-card>
+        <c-row>
+          <c-col>
+            <div class="mb-3">
+              <!-- Primer Nombre -->
+              <mat-form-field appearance="legacy" class="example-container">
+                <mat-label for="PrimerNombre">
+                  <mat-icon>text_format</mat-icon> Primer Nombre:
+                </mat-label>
+
+                <input
+                  style="text-transform: uppercase"
+                  formControlName="per_primer_nombre"
+                  type="text"
+                  matInput
+                  #input
+                  maxlength="20"
+                />
+              </mat-form-field>
+            </div>
+          </c-col>
+          <c-col>
+            <div class="mb-3">
+              <!-- Segundo Nombre -->
+              <mat-form-field appearance="legacy" class="example-container">
+                <mat-label for="SegundoNombre">
+                  <mat-icon>text_format</mat-icon> Segundo Nombre:
+                </mat-label>
+
+                <input
+                  style="text-transform: uppercase"
+                  formControlName="per_otros_nombres"
+                  type="text"
+                  matInput
+                  #input
+                  maxlength="20"
+                />
+              </mat-form-field>
+            </div>
+          </c-col>
+        </c-row>
+
+        <c-row>
+          <c-col>
+            <div class="mb-3">
+              <!-- Primer Apellido -->
+              <mat-form-field appearance="legacy" class="example-container">
+                <mat-label for="PrimerApellido">
+                  <mat-icon>text_format</mat-icon> Primer Apellido:
+                </mat-label>
+
+                <input
+                  style="text-transform: uppercase"
+                  formControlName="per_primer_apellido"
+                  type="text"
+                  matInput
+                  #input
+                  maxlength="20"
+                />
+              </mat-form-field>
+            </div>
+          </c-col>
+          <c-col>
+            <div class="mb-3">
+              <!-- Segundo Apellido -->
+              <mat-form-field appearance="legacy" class="example-container">
+                <mat-label for="SegundoApellido">
+                  <mat-icon>text_format</mat-icon> Segundo Apellido:
+                </mat-label>
+
+                <input
+                  style="text-transform: uppercase"
+                  formControlName="per_segundo_apellido"
+                  type="text"
+                  matInput
+                  #input
+                  maxlength="20"
+                />
+              </mat-form-field>
+            </div>
+          </c-col>
+        </c-row>
+
+        <c-row>
+          <c-col>
+            <div class="mb-3">
+              <!-- Dirección -->
+              <mat-form-field appearance="legacy" class="example-container">
+                <mat-label for="Direccion">
+                  <mat-icon>location_on</mat-icon> Dirección:
+                </mat-label>
+
+                <input
+                  style="text-transform: uppercase"
+                  formControlName="pac_direccion"
+                  type="text"
+                  matInput
+                  #input
+                  maxlength="50"
+                />
+              </mat-form-field>
+            </div>
+          </c-col>
+          <c-col>
+            <div class="mb-3">
+              <!-- Fecha Nacimiento -->
+              <mat-form-field appearance="legacy" class="example-container">
+                <mat-label for="FechaNacimiento">
+                  <mat-icon>beenhere</mat-icon> Fecha Nacimiento:
+                </mat-label>
+                <input
+                  formControlName="pac_fecha_nacimiento"
+                  [max]="todayDate"
+                  matInput
+                  [matDatepicker]="picker"
+                  placeholder="dd/mm/yyyy"
+                />
+                <mat-datepicker-toggle
+                  matSuffix
+                  [for]="picker"
+                ></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+            </div>
+          </c-col>
+          <c-col>
+            <div class="mb-3">
+              <!-- E-mail -->
+              <mat-form-field appearance="legacy" class="example-container">
+                <mat-label for="Email">
+                  <mat-icon>mail</mat-icon> Correo:
+                </mat-label>
+                <input
+                  formControlName="pac_correo"
+                  type="email"
+                  matInput
+                  #input
+                  placeholder="Ej. sk@gmail.com"
+                />
+              </mat-form-field>
+            </div>
+          </c-col>
+        </c-row>
+
+        <c-row>
+          <c-col>
+            <div class="mb-3">
+              <!-- Tipo de Identificación -->
+              <mat-form-field appearance="legacy">
+                <mat-label for="per_tip_id">
+                  <mat-icon>group_work</mat-icon> Tipo de Identificación:
+                </mat-label>
+                <mat-select formControlName="per_tip_id">
+                  <mat-option value="">-- Seleccione -- </mat-option>
+                  <mat-option
+                    *ngFor="let tipo of tiposDeDocumento"
+                    [value]="tipo.Abreviatura"
+                  >
+                    {{ tipo.Descripcion }}</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </c-col>
+          <c-col>
+            <div class="mb-3">
+              <!-- Identificación -->
+              <mat-form-field appearance="legacy">
+                <mat-label for="per_identificacion">
+                  <mat-icon>sell</mat-icon> Nº. de Identificación:
+                </mat-label>
+                <input
+                  formControlName="per_identificacion"
+                  type="text"
+                  matInput
+                  #input
+                />
+              </mat-form-field>
+            </div>
+          </c-col>
+          <c-col>
+            <div class="mb-3">
+              <!-- Nº. Celular -->
+              <mat-form-field appearance="legacy">
+                <mat-label for="pac_celular">
+                  <mat-icon>phone</mat-icon> Nº. de Celular:
+                </mat-label>
+                <input
+                  formControlName="pac_celular"
+                  type="text"
+                  matInput
+                  #input
+                />
+              </mat-form-field>
+            </div>
+          </c-col>
+        </c-row>
+
+        <c-row>
+          <c-col>
+            <div class="mb-3">
+              <!-- Nº. Celular -->
+              <mat-form-field appearance="legacy">
+                <mat-label for="pac_telefono">
+                  <mat-icon>phone</mat-icon> Nº. Telefónico:
+                </mat-label>
+                <input
+                  formControlName="pac_telefono"
+                  type="text"
+                  matInput
+                  #input
+                />
+              </mat-form-field>
+            </div>
+          </c-col>
+          <c-col>
+            <div class="mb-3">
+              <!-- Nivel Educativo -->
+              <mat-form-field appearance="legacy">
+                <mat-label for="pac_nivel_educacion">
+                  <mat-icon>school</mat-icon> Nivel Educativo:
+                </mat-label>
+                <mat-select formControlName="pac_nivel_educacion">
+                  <mat-option
+                    *ngFor="let level of selectEducationLeve"
+                    [value]="level"
+                  >
+                    {{ level | titlecase }}</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </c-col>
+          <c-col>
+            <div class="mb-3">
+              <!-- Estado Civil -->
+              <mat-form-field appearance="legacy">
+                <mat-label for="pac_estado_civil">
+                  <mat-icon>person</mat-icon> Estado Civil:
+                </mat-label>
+                <mat-select formControlName="pac_estado_civil">
+                  <mat-option
+                    *ngFor="let marital of selectMaritalStatus"
+                    [value]="marital"
+                  >
+                    {{ marital }}</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </c-col>
+        </c-row>
+
+        <c-row>
+          <c-col>
+            <div class="mb-3">
+              <!-- Situación Laboral -->
+              <mat-form-field appearance="legacy">
+                <mat-label for="pac_situacion_laboral">
+                  <mat-icon>local_mall</mat-icon> Situación Laboral:
+                </mat-label>
+                <mat-select formControlName="pac_situacion_laboral">
+                  <mat-option
+                    *ngFor="let status of selectLaboralStatus"
+                    [value]="status"
+                  >
+                    {{ status | titlecase }}</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </c-col>
+
+          <c-col>
+            <div class="mb-3">
+              <!-- Régimen de Salud -->
+              <mat-form-field appearance="legacy">
+                <mat-label for="pac_regimen_salud">
+                  <mat-icon>local_hospital</mat-icon> Régimen de Salud:
+                </mat-label>
+                <mat-select formControlName="pac_regimen_salud">
+                  <mat-option
+                    *ngFor="let regimen of selectRegimenSalud"
+                    [value]="regimen"
+                  >
+                    {{ regimen | titlecase }}</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </c-col>
+
+          <c-col>
+            <div class="mb-3">
+              <!-- Estrato -->
+              <mat-form-field appearance="legacy" class="example-container">
+                <mat-label for="pac_estrato">
+                  <mat-icon> show_chart</mat-icon> Estrato:
+                </mat-label>
+
+                <input
+                  formControlName="pac_estrato"
+                  type="number"
+                  matInput
+                  #input
+                  maxlength="1"
+                />
+              </mat-form-field>
+            </div>
+          </c-col>
+        </c-row>
+      </mat-card>
+      <br />
+
+      <c-col xs="12">
+        <c-card>
+          <c-card-header>
+            <c-row>
+              <h5>Datos Salud</h5>
+            </c-row>
+          </c-card-header>
+        </c-card>
+      </c-col>
+
+      <mat-card>
+        <c-row>
+          <c-col>
+            <div class="mb-3">
+              <!-- Diabetes -->
+              <mat-form-field appearance="legacy">
+                <mat-label for="pac_diabetes">
+                  <mat-icon>transgender</mat-icon> Diabetes:
+                </mat-label>
+                <mat-select formControlName="pac_diabetes">
+                  <mat-option
+                    *ngFor="let diabetes of selectDiabetes"
+                    [value]="diabetes"
+                  >
+                    {{ diabetes }}</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </c-col>
+          <c-col>
+            <div class="mb-3">
+              <!-- Fumador -->
+              <mat-form-field appearance="legacy">
+                <mat-label for="pac_fuma">
+                  <mat-icon>smoking_rooms</mat-icon> Fumador:
+                </mat-label>
+                <mat-select formControlName="pac_fuma">
+                  <mat-option
+                    *ngFor="let fumador of selectFuma"
+                    [value]="fumador"
+                  >
+                    {{ fumador }}</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </c-col>
+          <c-col>
+            <div class="mb-3">
+              <!-- Peso -->
+              <mat-form-field appearance="legacy" class="example-container">
+                <mat-label for="pac_peso">
+                  <mat-icon>text_format</mat-icon> Peso (Kg):
+                </mat-label>
+
+                <input
+                  formControlName="pac_peso"
+                  type="number"
+                  matInput
+                  #input
+                  maxlength="1"
+                />
+              </mat-form-field>
+            </div>
+          </c-col>
+        </c-row>
+
+        <c-row>
+          <c-col>
+            <div class="mb-3">
+              <!-- Talla -->
+              <mat-form-field appearance="legacy" class="example-container">
+                <mat-label for="pac_talla">
+                  <mat-icon>text_format</mat-icon> Talla:
+                </mat-label>
+
+                <input
+                  formControlName="pac_talla"
+                  type="number"
+                  matInput
+                  #input
+                  maxlength="10"
+                />
+              </mat-form-field>
+            </div>
+          </c-col>
+          <c-col>
+            <div class="mb-3">
+              <!-- Primera Menstruación -->
+              <mat-form-field appearance="legacy" class="example-container">
+                <mat-label for="pac_primera_mestruacion">
+                  <mat-icon>text_format</mat-icon> Primera Menstruación (Años):
+                </mat-label>
+
+                <input
+                  formControlName="pac_primera_mestruacion"
+                  type="number"
+                  matInput
+                  #input
+                  maxlength="10"
+                />
+              </mat-form-field>
+            </div>
+          </c-col>
+          <c-col>
+            <div class="mb-3">
+              <!-- Partos -->
+              <mat-form-field appearance="legacy">
+                <mat-label for="pac_partos">
+                  <mat-icon>pregnant_woman</mat-icon> Partos:
+                </mat-label>
+                <mat-select formControlName="pac_partos">
+                  <mat-option
+                    *ngFor="let partos of selectPartos"
+                    [value]="partos"
+                  >
+                    {{ partos | titlecase }}</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </c-col>
+        </c-row>
+
+        <c-row>
+          <c-col>
+            <div class="mb-3">
+              <!-- Dispositivo Intrauterino -->
+              <mat-form-field appearance="legacy">
+                <mat-label for="pac_dispositivo_intrauterino">
+                  <mat-icon>transgender</mat-icon> Dispositivo Intrauterino:
+                </mat-label>
+                <mat-select formControlName="pac_dispositivo_intrauterino">
+                  <mat-option
+                    *ngFor="let dispoIntra of selectDispIntrauterino"
+                    [value]="dispoIntra"
+                  >
+                    {{ dispoIntra }}</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </c-col>
+          <c-col>
+            <div class="mb-3">
+              <!-- Tiempo Iserción -->
+              <mat-form-field appearance="legacy">
+                <mat-label for="pac_tiempo_insercion_DIU">
+                  <mat-icon>transgender</mat-icon> Tiempo Inserción:
+                </mat-label>
+                <mat-select formControlName="pac_tiempo_insercion_DIU">
+                  <mat-option
+                    *ngFor="let tiempo of selectTiempoInsercion"
+                    [value]="tiempo"
+                  >
+                    {{ tiempo | titlecase }}</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </c-col>
+          <c-col>
+            <div class="mb-3">
+              <!-- Anticonceptivos Orales -->
+              <mat-form-field appearance="legacy">
+                <mat-label for="pac_anticonceptivos_orales">
+                  <mat-icon>transgender</mat-icon> Anticonceptivos Orales:
+                </mat-label>
+                <mat-select formControlName="pac_anticonceptivos_orales">
+                  <mat-option
+                    *ngFor="let orales of selectAnticonceptivosOrales"
+                    [value]="orales"
+                  >
+                    {{ orales }}</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </c-col>
+        </c-row>
+
+        <c-row>
+          <c-col>
+            <div class="mb-3">
+              <!-- Número de parejas sexuales -->
+              <mat-form-field appearance="legacy" class="example-container">
+                <mat-label for="pac_parejas_sexuales">
+                  <mat-icon>wc</mat-icon> Nº. de Parejas Sexuales:
+                </mat-label>
+
+                <input
+                  formControlName="pac_parejas_sexuales"
+                  type="number"
+                  matInput
+                  #input
+                  maxlength="10"
+                />
+              </mat-form-field>
+            </div>
+          </c-col>
+          <c-col>
+            <div class="mb-3">
+              <!-- Relación con condón -->
+              <mat-form-field appearance="legacy">
+                <mat-label for="pac_relacion_condon">
+                  <mat-icon>mood</mat-icon> Relación con condón:
+                </mat-label>
+                <mat-select formControlName="pac_relacion_condon">
+                  <mat-option
+                    *ngFor="let condon of selectRelacionCondon"
+                    [value]="condon"
+                  >
+                    {{ condon }}</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </c-col>
+          <c-col>
+            <div class="mb-3">
+              <!-- Vacuna VPH -->
+              <mat-form-field appearance="legacy">
+                <mat-label for="pac_vacuna_vph">
+                  <mat-icon>transgender</mat-icon> Vacuna VPH:
+                </mat-label>
+                <mat-select formControlName="pac_vacuna_vph">
+                  <mat-option
+                    *ngFor="let vacuna of selectVacunaVph"
+                    [value]="vacuna"
+                  >
+                    {{ vacuna | titlecase }}</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </c-col>
+        </c-row>
+
+        <c-row>
+          <c-col>
+            <div class="mb-3">
+              <!-- Última Citología -->
+              <mat-form-field appearance="legacy">
+                <mat-label for="pac_ultima_citologia">
+                  <mat-icon>transgender</mat-icon> Última Citología:
+                </mat-label>
+                <mat-select formControlName="pac_ultima_citologia">
+                  <mat-option
+                    *ngFor="let citologia of selectUltimaCitologia"
+                    [value]="citologia"
+                  >
+                    {{ citologia }}</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </c-col>
+          <c-col>
+            <div class="mb-3">
+              <!-- Prueba ADN VPH -->
+              <mat-form-field appearance="legacy">
+                <mat-label for="pac_prueba_ADN_VPH">
+                  <mat-icon>transgender</mat-icon> Prueba ADN VPH:
+                </mat-label>
+                <mat-select formControlName="pac_prueba_ADN_VPH">
+                  <mat-option
+                    *ngFor="let prueba of selectPruebaVPH"
+                    [value]="prueba"
+                  >
+                    {{ prueba | titlecase }}</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </c-col>
+          <c-col>
+            <div class="mb-3">
+              <!-- Menopausia -->
+              <mat-form-field appearance="legacy">
+                <mat-label for="pac_menopausia">
+                  <mat-icon>transgender</mat-icon> Menopausia:
+                </mat-label>
+                <mat-select formControlName="pac_menopausia">
+                  <mat-option
+                    *ngFor="let menopausia of selectMenopausia"
+                    [value]="menopausia"
+                  >
+                    {{ menopausia }}</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </c-col>
+        </c-row>
+
+        <c-row>
+          <c-col>
+            <div class="mb-3">
+              <!-- Infecciones TS -->
+              <mat-form-field appearance="legacy" class="example-container">
+                <mat-label for="pac_infecciones_ts">
+                  <mat-icon>text_format</mat-icon> Infecciones TS:
+                </mat-label>
+
+                <input
+                  style="text-transform: uppercase"
+                  formControlName="pac_infecciones_ts"
+                  type="text"
+                  matInput
+                  #input
+                />
+              </mat-form-field>
+            </div>
+          </c-col>
+          <c-col>
+            <div class="mb-3">
+              <!-- Nombre Contácto Alternativo -->
+              <mat-form-field appearance="legacy" class="example-container">
+                <mat-label for="pac_contacto_alternativo">
+                  <mat-icon>text_format</mat-icon> Nombre Contácto Alternativo:
+                </mat-label>
+
+                <input
+                  style="text-transform: uppercase"
+                  formControlName="pac_contacto_alternativo"
+                  type="text"
+                  matInput
+                  #input
+                />
+              </mat-form-field>
+            </div>
+          </c-col>
+          <c-col>
+            <div class="mb-3">
+              <!-- Teléfono Contacto Alternativo -->
+              <mat-form-field appearance="legacy" class="example-container">
+                <mat-label for="pac_telefono_contacto_alternativo">
+                  <mat-icon>text_format</mat-icon> Teléfono Contacto
+                  Alternativo:
+                </mat-label>
+
+                <input
+                  formControlName="pac_telefono_contacto_alternativo"
+                  type="text"
+                  matInput
+                  #input
+                />
+              </mat-form-field>
+            </div>
+          </c-col>
+        </c-row>
+
+        <c-row>
+          <c-col>
+            <div class="mb-3">
+              <!-- Eps -->
+              <mat-form-field appearance="legacy">
+                <mat-label for="pac_eps">
+                  <mat-icon>local_hospital</mat-icon> Eps:
+                </mat-label>
+                <mat-select formControlName="eps_nombre">
+                  <mat-option
+                    *ngFor="let eps of allEps"
+                    [value]="eps.eps_nombre"
+                  >
+                    {{ eps.eps_nombre | titlecase }}</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </c-col>
+        </c-row>
+      </mat-card>
+      <br />
+      <button mat-raised-button color="primary" type="submit">
+        <mat-icon>save</mat-icon> Guardar
+      </button>
+    </form>
+  </mat-card>
 </c-container>
 <c-toaster class="p-3" position="fixed" [placement]="placement"></c-toaster>

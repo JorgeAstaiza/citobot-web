@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -10,10 +10,11 @@ import { SnackbarToastService } from 'src/app/shared/services/snackbar-toast.ser
   templateUrl: './crear-editar.component.html',
   styleUrls: ['./crear-editar.component.scss'],
 })
-export class CrearEditarComponent implements OnInit {
+export class CrearEditarComponent implements OnInit, OnDestroy {
   niv_mensaje!: FormControl;
   niv_descripcion!: FormControl;
-
+  actualizar = false;
+  idRiesgoActualizar!: number;
   constructor(
     private fb: FormBuilder,
     private nivelesRiesgoSvc: NivelRiesgoService,
@@ -24,7 +25,21 @@ export class CrearEditarComponent implements OnInit {
     this.niv_descripcion = new FormControl(null, Validators.required);
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.nivelesRiesgoSvc.riesgoEditar.subscribe((res) => {
+      console.log(res);
+      if (res.niv_id) {
+        this.actualizar = true;
+        this.idRiesgoActualizar = res.niv_id;
+        this.niv_mensaje.setValue(res.niv_mensaje);
+        this.niv_descripcion.setValue(res.niv_descripcion);
+      }
+    });
+  }
+  ngOnDestroy(): void {
+    this.nivelesRiesgoSvc.riesgoEditar.next({});
+    this.actualizar = false;
+  }
 
   public saveRiesgo() {
     if (this.niv_descripcion.valid && this.niv_descripcion.valid) {
@@ -32,14 +47,27 @@ export class CrearEditarComponent implements OnInit {
         niv_mensaje: this.niv_mensaje.value,
         niv_descripcion: this.niv_descripcion.value,
       };
-      this.nivelesRiesgoSvc.createRiesgo(objEnviar).subscribe((res) => {
-        if (res.codigoRespuesta === 0) {
-          this._snackbar.status(707, 'Riesgo creado exitosamente!');
-          this.router.navigate(['riesgos/consultar']);
-        } else {
-          this._snackbar.status(404);
-        }
-      });
+      if (this.actualizar) {
+        this.nivelesRiesgoSvc
+          .updateRiesgo(this.idRiesgoActualizar, objEnviar)
+          .subscribe((res) => {
+            if (res.codigoRespuesta === 0) {
+              this._snackbar.status(707, 'Riesgo creado exitosamente!');
+              this.router.navigate(['riesgos/consultar']);
+            } else {
+              this._snackbar.status(404);
+            }
+          });
+      } else {
+        this.nivelesRiesgoSvc.createRiesgo(objEnviar).subscribe((res) => {
+          if (res.codigoRespuesta === 0) {
+            this._snackbar.status(707, 'Riesgo creado exitosamente!');
+            this.router.navigate(['riesgos/consultar']);
+          } else {
+            this._snackbar.status(404);
+          }
+        });
+      }
     }
   }
 }

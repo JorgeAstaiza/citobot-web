@@ -3,6 +3,7 @@ import { FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 
 import { NivelRiesgo } from 'src/app/models/nivel-riesgo';
 import { SnackbarToastService } from 'src/app/shared/services/snackbar-toast.service';
@@ -26,7 +27,8 @@ export class ConsultarComponent implements OnInit {
 
   constructor(
     private nivelesRiesgoSvc: NivelRiesgoService,
-    private _snackbar: SnackbarToastService
+    private _snackbar: SnackbarToastService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -54,7 +56,10 @@ export class ConsultarComponent implements OnInit {
       }
     });
   }
-
+  public editarRiesgo(riesgo: NivelRiesgo) {
+    this.nivelesRiesgoSvc.riesgoEditar.next(riesgo);
+    this.router.navigate(['riesgos/crear']);
+  }
   public deleteRiesgo(riesgo: NivelRiesgo) {
     if (riesgo.niv_id) {
       this.nivelesRiesgoSvc

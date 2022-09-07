@@ -12,6 +12,8 @@ import { NivelRiesgo } from '../../models/nivel-riesgo';
 export class NivelRiesgoService {
   enviromentUrl = url;
   usuarioConsultar: BehaviorSubject<any> = new BehaviorSubject({});
+  riesgoEditar: BehaviorSubject<any> = new BehaviorSubject({});
+
   public headers = new HttpHeaders().set(
     'Authorization',
     localStorage.getItem('token') || ''
