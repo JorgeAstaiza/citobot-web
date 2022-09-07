@@ -111,7 +111,7 @@ export class CrearComponent implements OnInit {
         [Validators.required, Validators.maxLength(10)],
       ],
       usu_usuario: ['', [Validators.required, Validators.maxLength(10)]],
-      usu_clave: [''],
+      usu_clave: ['', [Validators.required, Validators.minLength(6)]],
       usu_email: [
         '',
         [

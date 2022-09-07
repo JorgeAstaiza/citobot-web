@@ -48,7 +48,7 @@ export class CrearComponent implements OnInit {
   public tam_vph_booleano!: boolean;
   public idUltimoTamizaje: any;
   public configuracionVph: string | null = '';
-  public urlImagen: string | null = '';
+  public urlImagen: string = '';
   private msmAgregado: string = 'Agregado Exitosamente!';
   contrastes: string[] = [];
   public showWebcam = true;
@@ -57,7 +57,7 @@ export class CrearComponent implements OnInit {
   private nextWebcam: Subject<boolean | string> = new Subject<
     boolean | string
   >();
-  public webcamImage: WebcamImage[] = [];
+  public webcamImage: any = [];
   public deviceId!: string;
   // webcam snapshot trigger
   private trigger: Subject<void> = new Subject<void>();
@@ -101,6 +101,7 @@ export class CrearComponent implements OnInit {
         this.obtenerNombreDelPaciente();
         this.contruir_formulario();
         this.llenarForm();
+        this.obtenerImagenFtp(params.idTamizaje);
       }
       this.checkImagen = new FormControl(null, Validators.required);
     });
@@ -156,6 +157,47 @@ export class CrearComponent implements OnInit {
         this.multipleWebcamsAvailable = mediaDevices && mediaDevices.length > 1;
       }
     );
+  }
+  private obtenerImagenFtp(idTamizaje: number) {
+    try {
+      this.imagenSvc.getImagenByIdTamizaje(idTamizaje).subscribe((imagen) => {
+        if (imagen.objetoRespuesta[0].ima_ruta !== undefined) {
+          this.urlImagen = imagen.objetoRespuesta[0].ima_ruta;
+          this.obtenerImgFtp(this.urlImagen);
+        } else {
+          this.urlImagen =
+            'https://images.unsplash.com/photo-1583106853354-9d88c18d46cf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1064&q=80';
+        }
+      });
+    } catch (error) {
+      console.log('Error: ', error);
+    }
+  }
+
+  private obtenerImgFtp(nombre: string) {
+    const objEnviar = {
+      nombreImg: nombre,
+    };
+    this.imagenSvc.getImagenByFtp(objEnviar).subscribe((res) => {
+      this.createImageFromBlob(res);
+    });
+  }
+  createImageFromBlob(image: Blob) {
+    let reader = new FileReader();
+    reader.addEventListener(
+      'load',
+      () => {
+        const obj = {
+          imageAsDataUrl: reader.result,
+        };
+        this.webcamImage.push(obj);
+      },
+      false
+    );
+
+    if (image) {
+      reader.readAsDataURL(image);
+    }
   }
 
   private obtenerNombreDelPaciente(): void {
