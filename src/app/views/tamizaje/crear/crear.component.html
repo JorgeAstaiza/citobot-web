@@ -1,143 +1,100 @@
 <c-container>
-  <c-col xs="12">
-    <img
-      src="../../../../assets/img/brand/icono-nuevo-paciente.png"
-      alt=""
-      srcset=""
-    />
-  </c-col>
+    <c-col xs="12">
+        <img src="../../../../assets/img/brand/icono-nuevo-paciente.png" alt="" srcset="" />
+    </c-col>
 
-  <mat-card>
-    <form [formGroup]="formulario" novalidate cForm>
-      <c-col xs="12">
-        <c-card>
-          <c-card-header>
-            <c-row>
-              <c-col>
-                <strong> Paciente: </strong>
-                {{ paciente | titlecase }}
-              </c-col>
-              <c-col style="text-align: right">
-                <button
-                  (click)="verInstrucciones()"
-                  type="button"
-                  mat-raised-button
-                  color="info"
-                >
-                  <mat-icon style="color: #00838f">help</mat-icon> ¿Cómo
-                  Tamizar?
-                </button>
-              </c-col>
-            </c-row>
-          </c-card-header>
-        </c-card>
-      </c-col>
+    <mat-card>
+        <form [formGroup]="formulario" novalidate cForm>
+            <c-col xs="12">
+                <c-card>
+                    <c-card-header>
+                        <c-row>
+                            <c-col>
+                                <strong> Paciente: </strong>
+                                {{ paciente | titlecase }}
+                            </c-col>
+                            <c-col style="text-align: right">
+                                <button (click)="verInstrucciones()" type="button" mat-raised-button color="info">
+                                    <mat-icon style="color: #00838f">help</mat-icon> ¿Cómo
+                                    Tamizar?
+                                </button>
+                            </c-col>
+                        </c-row>
+                    </c-card-header>
+                </c-card>
+            </c-col>
 
-      <mat-card>
-        <c-row class="mt-1">
-          <c-col>
-            <div class="mb-3">
-              <!-- Contraste -->
-              <mat-form-field appearance="legacy">
-                <mat-label for="contraste">
-                  <mat-icon>group_work</mat-icon> Contraste:
-                </mat-label>
-                <mat-select formControlName="contraste">
-                  <mat-option value="">-- Seleccione -- </mat-option>
-                  <mat-option
-                    *ngFor="let contraste of contrastes"
-                    [value]="contraste"
-                  >
-                    {{ contraste }}</mat-option
-                  >
-                </mat-select>
-              </mat-form-field>
-            </div>
-          </c-col>
+            <mat-card>
+                <c-row class="mt-1">
+                    <c-col>
+                        <div class="mb-3">
+                            <!-- Contraste -->
+                            <mat-form-field appearance="legacy">
+                                <mat-label for="contraste">
+                                    <mat-icon>group_work</mat-icon> Contraste:
+                                </mat-label>
+                                <mat-select formControlName="contraste">
+                                    <mat-option value="">-- Seleccione -- </mat-option>
+                                    <mat-option *ngFor="let contraste of contrastes" [value]="contraste">
+                                        {{ contraste }}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </c-col>
 
-          <c-col>
-            <div *ngIf="configuracionVph === 'true'" class="mt-3">
-              <!-- Vph -->
-              VPH
-              <mat-slide-toggle formControlName="vph">
-                {{ isChecked ? "( + ) | Positivo" : "( - ) | Negativo" }}
-              </mat-slide-toggle>
-            </div>
-          </c-col>
-        </c-row>
-        <webcam
-          [height]="500"
-          [width]="500"
-          [trigger]="triggerObservable"
-          (imageCapture)="handleImage($event)"
-          *ngIf="showWebcam"
-          [allowCameraSwitch]="allowCameraSwitch"
-          [switchCamera]="nextWebcamObservable"
-          [imageQuality]="1"
-          (cameraSwitched)="cameraWasSwitched($event)"
-        ></webcam>
-        <div class="ctn-btns">
-          <button
-            [disabled]="btnCapture"
-            class="btn btn-primary boton-capturar"
-            (click)="triggerSnapshot()"
-          >
-            Tomar Foto
-          </button>
-          <button
-            class="btn btn-primary"
-            (click)="showNextWebcam(true)"
-            [disabled]="!multipleWebcamsAvailable"
-          >
-            Cambiar de camara
-          </button>
-        </div>
-        <br />
+                    <c-col>
+                        <div *ngIf="estadoConfiguracionVph === 'true'" class="mt-3">
+                            <!-- Vph -->
+                            VPH
+                            <mat-slide-toggle formControlName="vph">
+                                {{ isChecked ? "( + ) | Positivo" : "( - ) | Negativo" }}
+                            </mat-slide-toggle>
+                        </div>
+                    </c-col>
+                </c-row>
+                <webcam [height]="500" [width]="500" [trigger]="triggerObservable" (imageCapture)="handleImage($event)"
+                    *ngIf="showWebcam" [allowCameraSwitch]="allowCameraSwitch" [switchCamera]="nextWebcamObservable"
+                    [imageQuality]="1" (cameraSwitched)="cameraWasSwitched($event)"></webcam>
+                <div class="ctn-btns">
+                    <button [disabled]="btnCapture" class="btn btn-primary boton-capturar" (click)="triggerSnapshot()">
+                        Tomar Foto
+                    </button>
+                    <button class="btn btn-primary" (click)="showNextWebcam(true)"
+                        [disabled]="!multipleWebcamsAvailable">
+                        Cambiar de camara
+                    </button>
+                </div>
+                <br />
 
-        <ul class="list-unstyled">
-          <li>
-            <mat-radio-group class="mt-2">
-              <c-row class="mt-1">
-                <c-col>
-                  <div class="mb-3">
-                    <mat-radio-button
-                      *ngFor="let src of webcamImage; let idx = index"
-                      (click)="setPhoto(idx)"
-                      [value]="idx"
-                      style="margin-bottom: 8px"
-                      [formControl]="checkImagen"
-                      name="checkImagen"
-                      ngDefaultControl
-                      >Imagen {{ idx }}
-                      <mat-card class="card-imagen">
-                        <!-- Previsualización de Imagenes -->
-                        <img
-                          [src]="src.imageAsDataUrl"
-                          height="350"
-                          width="350"
-                        />
-                      </mat-card>
-                    </mat-radio-button>
-                  </div>
-                </c-col>
-              </c-row>
-            </mat-radio-group>
-          </li>
-        </ul>
-      </mat-card>
-      <br />
+                <ul class="list-unstyled">
+                    <li>
+                        <mat-radio-group class="mt-2">
+                            <c-row class="mt-1">
+                                <c-col>
+                                    <div class="mb-3">
+                                        <mat-radio-button *ngFor="let src of webcamImage; let idx = index"
+                                            (click)="setPhoto(idx)" [value]="idx" style="margin-bottom: 8px"
+                                            [formControl]="checkImagen" name="checkImagen" ngDefaultControl>Imagen {{
+                                            idx }}
+                                            <mat-card class="card-imagen">
+                                                <!-- Previsualización de Imagenes -->
+                                                <img [src]="src.imageAsDataUrl" height="350" width="350" />
+                                            </mat-card>
+                                        </mat-radio-button>
+                                    </div>
+                                </c-col>
+                            </c-row>
+                        </mat-radio-group>
+                    </li>
+                </ul>
+            </mat-card>
+            <br />
 
-      <button
-        type="submit"
-        style="margin-right: 5px"
-        mat-raised-button
-        color="primary"
-        [disabled]="loading"
-        (click)="save()"
-      >
-        <mat-icon>save</mat-icon>{{ loading ? "Guardando..." : "Guardar" }}
-      </button>
-    </form>
-  </mat-card>
+            <button type="submit" style="margin-right: 5px" mat-raised-button color="primary" [disabled]="loading"
+                (click)="save()">
+                <mat-icon>save</mat-icon>{{ loading ? "Guardando..." : "Guardar" }}
+            </button>
+        </form>
+    </mat-card>
 </c-container>
 <c-toaster class="p-3" position="fixed"></c-toaster>

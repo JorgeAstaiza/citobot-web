@@ -13,12 +13,12 @@
                 <strong>Fecha:</strong>
                 {{ data.Tamizaje.tam_fecha | date: "dd/MM/yyyy" }}
             </li>
-            <li><strong>Contraste:</strong> {{ data.Tamizaje.tam_contraste }}</li>
-            <li><strong>Vph: </strong> {{ data.Tamizaje.tam_vph }}</li>
-            <!-- 
-            <li><strong>Nivel: </strong> {{ data.Tamizaje.tam_niv_id }}</li>
-            <li><strong>Mensaje: </strong> {{ data.Tamizaje.niv_mensaje }}</li> 
-            -->
+            <li>
+                <strong>Contraste:</strong> {{ data.Tamizaje.tam_contraste }}
+            </li>
+            <li *ngIf="estadoConfiguracionVph === 'true'">
+                <strong>Vph: </strong> {{ data.Tamizaje.tam_vph }}
+            </li>
         </ul>
     </mat-card-content>
     <mat-card-actions style="text-align: center">
