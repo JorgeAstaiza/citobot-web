@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable, NgZone } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/compat/firestore';
@@ -7,6 +6,7 @@ import { Router } from '@angular/router';
 
 import { url } from 'src/environments/environment';
 import { User } from '../../models/user.model';
+import { SnackbarToastService } from './snackbar-toast.service';
 
 @Injectable({
     providedIn: 'root',
@@ -21,7 +21,7 @@ export class AuthService {
         public afAuth: AngularFireAuth, // Inject Firebase auth service
         public router: Router,
         public ngZone: NgZone, // NgZone service to remove outside scope warning
-        private http: HttpClient
+        private _snackbar: SnackbarToastService,
     ) {
         /* Saving user data in localstorage when
             logged in and setting up null when logged out */
@@ -38,7 +38,6 @@ export class AuthService {
         });
     }
 
-    // Sign in with email/password
     SignIn(email: string, password: string) {
         return this.afAuth
             .signInWithEmailAndPassword(email, password)
@@ -53,7 +52,8 @@ export class AuthService {
                 //this.SetUserData(result.user);
             })
             .catch((error) => {
-                window.alert(error.message);
+                console.log(error);
+                this._snackbar.status(101, 'Error', 'Usuario o Contraseña Incorrecto');
             });
     }
 
@@ -114,6 +114,15 @@ export class AuthService {
                 });
         });
 
+    }
+
+    async sendPasswordResetEmail(email: string): Promise<void> {
+        try {
+            return this.afAuth.sendPasswordResetEmail(email);
+        } catch (error) {
+            console.log(error);
+
+        }
     }
 
     /* Setting up user data when sign in with username/password,

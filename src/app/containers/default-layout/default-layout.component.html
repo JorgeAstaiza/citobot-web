@@ -1,18 +1,19 @@
 <!--sidebar-->
 <c-sidebar #sidebar="cSidebar" class="d-print-none sidebar sidebar-fixed" id="sidebar" visible>
-
-    <c-sidebar-brand [brandFull]="{
-      src: 'assets/img/brand/simbolo-solo.png',
-      width: 120,
-      height: 120,
-      alt: 'CoreUI Logo'
-    }" [brandNarrow]="{
-      src: 'assets/img/brand/simbolo-solo.png',
-      width: 46,
-      height: 46,
-      alt: 'CoreUI Logo'
-    }" routerLink="./">
-    </c-sidebar-brand>
+    <div style="margin-top: 15px; margin-bottom: 15px;">
+        <c-sidebar-brand [brandFull]="{
+          src: 'assets/img/brand/simbolo-solo.png',
+          width: 120,
+          height: 120,
+          alt: 'CoreUI Logo'
+        }" [brandNarrow]="{
+          src: 'assets/img/brand/simbolo-solo.png',
+          width: 46,
+          height: 46,
+          alt: 'CoreUI Logo'
+        }" routerLink="./">
+        </c-sidebar-brand>
+    </div>
 
     <perfect-scrollbar [config]="perfectScrollbarConfig">
         <!--  [perfectScrollbar]="perfectScrollbarConfig"-->

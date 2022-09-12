@@ -7,6 +7,7 @@
             <c-card-header>
                 <form [formGroup]="formulario" novalidate cForm>
                     <c-row>
+
                         <c-col>
                             <mat-form-field appearance="legacy" class="example-container">
                                 <mat-label>Nº. Identificación</mat-label>
@@ -14,9 +15,8 @@
                                     placeholder="Ej. 1061778888" #input />
                             </mat-form-field>
 
-                            <!-- <input aria-label="sm input example" cFormControl placeholder="Identificacion" type="text"
-                              formControlName="identificacion" (keyup)="filtrarData()" /> -->
                         </c-col>
+
                         <c-col>
                             <!-- Tipo de Identificación -->
                             <mat-form-field appearance="legacy">

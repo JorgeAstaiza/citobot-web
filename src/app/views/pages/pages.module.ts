@@ -12,13 +12,15 @@ import { Page404Component } from './page404/page404.component';
 import { Page500Component } from './page500/page500.component';
 import { PagesRoutingModule } from './pages-routing.module';
 import { RegisterComponent } from './register/register.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 
 @NgModule({
     declarations: [
         LoginComponent,
         RegisterComponent,
         Page404Component,
-        Page500Component
+        Page500Component,
+        ForgotPasswordComponent
     ],
     imports: [
         AngularMaterialModule,

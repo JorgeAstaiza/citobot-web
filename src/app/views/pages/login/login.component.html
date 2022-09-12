@@ -1,7 +1,7 @@
 <div class="wrapper">
     <div class="login-text">
-        <button class="cta">
-        </button>
+        <div class="cta">
+        </div>
 
     </div>
     <div class="call-text">
@@ -44,10 +44,16 @@
 
             <button class="button-iniciar" (click)="loginUser()">Iniciar</button>
 
+            <!-- Restablecer la contraseña -->
+            <c-row style="margin-top: 20px;">
+                <c-col>
+                    <a routerLink="/forgot-password">
+                        ¿No recuerdas tú contraseña?
+                    </a>
+                </c-col>
+            </c-row>
+
         </form>
-
-
-
 
     </div>
 
