@@ -59,13 +59,10 @@ export class AuthService {
 
     // Sign up with email/password
     SignUp(email: string, password: string, form: any) {
-        console.log(email, password);
 
         return this.afAuth
             .createUserWithEmailAndPassword(email, password)
             .then((result) => {
-
-                console.log('Result Signup: ', result);
 
                 this.SetUserData(form);
                 return result;
@@ -77,8 +74,6 @@ export class AuthService {
 
     SetUserData(user: any) {
 
-        console.log('User a Firebase: ', user);
-
         const userRef: AngularFirestoreDocument<any> = this.afs.doc(
             `users/${user.uid}`
         );
@@ -87,7 +82,6 @@ export class AuthService {
             usu_email: user.email,
             usu_rol: user.role,
         };
-        console.log('userData: ', userData);
 
         return userRef.set(userData, {
             merge: true,
@@ -96,7 +90,6 @@ export class AuthService {
 
     // TODO: Tomar los datos de inicio de sesion del localstorage y voler a llamar a la funcion de login
     // antes de actualizar o eliminar o reestablecer contraseñas
-
     updateUserFirebase(email: string) {
 
         return this.afAuth.currentUser.then((user) => {
@@ -125,11 +118,6 @@ export class AuthService {
         }
     }
 
-    /* Setting up user data when sign in with username/password,
-    sign up with username/password and sign in with social auth
-    provider in Firestore database using AngularFirestore + AngularFirestoreDocument service */
-
-
     get isLoggedIn(): boolean {
         const user = JSON.parse(localStorage.getItem('user')!);
         return user !== null ? true : false;
@@ -153,24 +141,5 @@ export class AuthService {
             this.router.navigate(['login']);
         });
     }
-
-    /* private prueba() {
-        this.afAuth.authState.subscribe((user) => {
-            if (user) {
-                this.userData = user;
-                localStorage.setItem('user', JSON.stringify(this.userData));
-                JSON.parse(localStorage.getItem('user')!);
-            } else {
-                localStorage.setItem('user', 'null');
-                JSON.parse(localStorage.getItem('user')!);
-            }
-        });
-    } */
-
-    /* registerUser(form: User): Observable<any> {
-        return this.http.post<any>(`${this.enviromentUrl}/usuarios/crear`, form);
-    } */
-
-
 
 }

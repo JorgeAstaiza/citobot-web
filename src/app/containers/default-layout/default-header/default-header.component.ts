@@ -15,12 +15,11 @@ export class DefaultHeaderComponent extends HeaderComponent {
 
     @Input() sidebarId: string = "sidebar";
 
-    public newMessages = new Array(4);
-    public newTasks = new Array(5);
-    public newNotifications = new Array(5);
+    private ID_CONFIGURACION_VPH: number = 1;  // Id de la configuración del VPH
+    private ID_CONFIGURACION_MODO: number = 7; // Id de la configuración del MODO
+
     public usuario: any;
     public usuario_email: string = '';
-    private id_Config_Habilitar_Vph: number = 1; // Id de la configuración
 
 
     constructor(
@@ -34,32 +33,62 @@ export class DefaultHeaderComponent extends HeaderComponent {
         this.usuarioSvc.getUsuarioLogueado().subscribe((usuario) => {
             this.usuario = usuario;
 
-            this.verificarConfiguracionVphEnBd(this.usuario);
+            this.verificarConfiguracionesEnBd(this.usuario);
         });
 
     }
 
     // Esto es solo cuando el usuario ingresa por primera vez
-    verificarConfiguracionVphEnBd(usuario: any): void {
-        this._configuracionxUsuarioSvc.getConfiguracionxIdentificacionAndIdConfig(usuario.per_identificacion, this.id_Config_Habilitar_Vph).subscribe(respuesta => {
+    verificarConfiguracionesEnBd(usuario: any): void {
 
-            // Si la respuesta tiene una longitud === 0 debo registrar la configuración automáticamente.
-            if (respuesta.objetoRespuesta.length === 0) {
-                this.registrarConfiguracion(usuario.per_identificacion, this.id_Config_Habilitar_Vph);
-            }
-            else {
+        let idsConfiguraciones = [this.ID_CONFIGURACION_VPH, this.ID_CONFIGURACION_MODO];
 
-                // Guardar la configuración en el localstorage
-                const configuracionVph = {
-                    id: respuesta.objetoRespuesta[0].confu_id,
-                    estado: respuesta.objetoRespuesta[0].confu_estado
-                }
+        for (let index = 0; index < idsConfiguraciones.length; index++) {
 
-                localStorage.setItem('configuracionVph', JSON.stringify(configuracionVph));
+            this._configuracionxUsuarioSvc
+                .getConfiguracionxIdentificacionAndIdConfig(usuario.per_identificacion, idsConfiguraciones[index])
+                .subscribe(respuesta => {
 
-            }
+                    // Si la respuesta tiene una longitud === 0 debo registrar la configuración automáticamente.
+                    // Mejorarla para que no siempre se agregue true en la linea 99
+                    if (respuesta.objetoRespuesta.length === 0) {
 
-        })
+                        this.registrarConfiguracion(usuario.per_identificacion, idsConfiguraciones[index]);
+                    }
+                    else {
+
+                        switch (respuesta.objetoRespuesta[0].confu_conf_id) {
+
+                            case this.ID_CONFIGURACION_VPH:
+
+                                // Guardar la configuración en el localstorage
+                                const configuracionVph = {
+                                    id: respuesta.objetoRespuesta[0].confu_id,
+                                    estado: respuesta.objetoRespuesta[0].confu_estado
+                                }
+
+                                localStorage.setItem('configuracionVph', JSON.stringify(configuracionVph));
+
+                                break;
+
+                            case this.ID_CONFIGURACION_MODO:
+
+                                // Guardar la configuración en el localstorage
+                                const configuracionModo = {
+                                    id: respuesta.objetoRespuesta[0].confu_id,
+                                    estado: respuesta.objetoRespuesta[0].confu_estado
+                                }
+
+                                localStorage.setItem('configuracionModo', JSON.stringify(configuracionModo));
+
+                                break;
+                        }
+
+                    }
+
+                });
+        }
+
     }
 
     private registrarConfiguracion(identificacion: string, idConfiguracion: number): void {
@@ -75,7 +104,7 @@ export class DefaultHeaderComponent extends HeaderComponent {
 
             if (respuesta.codigoRespuesta === 0) {
                 // Vuelvo a hacer la verificación para que se guarde la configuracion en el localStorage
-                this.verificarConfiguracionVphEnBd(this.usuario);
+                this.verificarConfiguracionesEnBd(this.usuario);
             }
         })
     }

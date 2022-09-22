@@ -42,9 +42,9 @@
                             <!-- Configurar VPH -->
                             <tr>
                                 <td> Habilitar Vph </td>
-                                <td>
+                                <td> :
                                     <mat-slide-toggle formControlName="vph">
-                                        {{isCheckedVph === true ? '( SI )' : '( NO )'}}
+                                        {{isCheckedVph === true ? '( Sí )' : '( No )'}}
                                     </mat-slide-toggle>
                                 </td>
                             </tr>
@@ -52,10 +52,17 @@
                             <!-- Configurar Modo -->
                             <tr>
                                 <td> Modo </td>
-                                <td>
-                                    <mat-slide-toggle formControlName="modo">
+                                <td> :
+                                    <mat-radio-group formControlName="modo">
+                                        <mat-radio-button *ngFor="let modo of modos" name="opciones" [value]="modo">
+                                            {{modo}}
+                                        </mat-radio-button>
+                                        <!-- <mat-radio-button value="Validación">Validación</mat-radio-button>
+                                        <mat-radio-button value="Entrenamiento">Entrenamiento</mat-radio-button> -->
+                                    </mat-radio-group>
+                                    <!-- <mat-slide-toggle formControlName="modo">
                                         {{isCheckedModo === true ? '( VALIDACIÓN )' : '( ENTRENAMIENTO )'}}
-                                    </mat-slide-toggle>
+                                    </mat-slide-toggle> -->
                                 </td>
                             </tr>
 

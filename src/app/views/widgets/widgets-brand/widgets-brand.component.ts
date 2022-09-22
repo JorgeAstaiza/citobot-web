@@ -58,7 +58,6 @@ export class WidgetsBrandComponent implements AfterContentInit {
     private obtenerTotalTamizajes(totalPacientes: number): void {
 
         this.tamizajeSvc.getAllTamizajes().subscribe(allTamizajes => {
-            console.log('Tamizajes: ', allTamizajes);
 
             if (allTamizajes.objetoRespuesta.length) {
 

@@ -5,7 +5,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { ToasterComponent, ToasterPlacement } from '@coreui/angular';
+import { ConfiguracionXUsuario } from 'src/app/models/configuracion-x-usuario';
 import { AuthService } from 'src/app/shared/services/auth.service';
+import { ConfiguracionXUsuarioService } from 'src/app/shared/services/configuracion-x-usuario.service';
 import { EnumService } from 'src/app/shared/services/enum.service';
 import { SnackbarToastService } from 'src/app/shared/services/snackbar-toast.service';
 import { UsuarioService } from 'src/app/shared/services/usuario.service';
@@ -23,6 +25,11 @@ import { transformEnum } from '../../../util/enum.util';
 export class CrearComponent implements OnInit {
     public placement: ToasterPlacement = ToasterPlacement.TopEnd;
     @ViewChild(ToasterComponent) toaster!: ToasterComponent;
+
+    private ID_CONFIGURACION_VPH: number = 1;  // Id de la configuración del VPH
+    private ID_CONFIGURACION_MODO: number = 7; // Id de la configuración del MODO
+
+    public modoSeleccionado: string = 'Validación';
 
     public selectRol = [];
     public selectEstado = [];
@@ -63,7 +70,8 @@ export class CrearComponent implements OnInit {
         private profesionService: ProfesionService,
         private _snackbar: SnackbarToastService,
         private activatedRoute: ActivatedRoute,
-        private router: Router
+        private router: Router,
+        private _configuracionxUsuarioSvc: ConfiguracionXUsuarioService,
     ) { }
 
     ngOnInit(): void {
@@ -228,7 +236,9 @@ export class CrearComponent implements OnInit {
 
         if (!this.esActualizar) {
             this.usuarioService.createUsuario(objEnviar).subscribe((res) => {
+
                 if (res.codigoRespuesta === 0) {
+
                     const newUser = {
                         userName: this.formulario.get('usu_usuario')?.value,
                         id: this.formulario.get('per_identificacion')?.value,
@@ -238,8 +248,12 @@ export class CrearComponent implements OnInit {
                         passwordRepeat: this.formulario.get('usu_clave')?.value,
                     };
 
+                    // Una vez creado el nuevo usuario, le asignó sus configuraciones iniciales
+                    this.registrarConfiguracionModo(this.formulario.get('per_identificacion')?.value, this.ID_CONFIGURACION_MODO);
+
                     // Registro en Firestore
                     let accion = 'crear';
+
                     this.saveUserInFirestore(newUser, accion);
                 } else {
                     // 404: Error, No es posible procesar la solicitud
@@ -273,14 +287,26 @@ export class CrearComponent implements OnInit {
         }
     }
 
+    private registrarConfiguracionModo(identificacion: string, idConfiguracion: number): void {
+
+        const objEnviar: ConfiguracionXUsuario = {
+            confu_usu_per_identificacion: identificacion,
+            confu_conf_id: idConfiguracion,
+            confu_estado: this.modoSeleccionado
+        };
+
+        this._configuracionxUsuarioSvc.createConfiguracionxUsuario(objEnviar).subscribe((respuesta) => {
+
+            if (respuesta.codigoRespuesta === 0) {
+
+                console.log('Configuración Agregada Exitosamente!');
+            }
+        })
+    }
+
     updateUserInFirestore(email: string) {
         this.authService.updateUserFirebase(email).then((result: any) => {
             console.log('saveUserInFirestore', result);
-            /* if (result.user.uid) {
-      
-                          this._snackbar.status(707, this.msmActualizado)
-      
-                      } */
         });
     }
 

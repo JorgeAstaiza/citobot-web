@@ -60,7 +60,7 @@ export const navItemsUsuario: INavData[] = [
     {
         name: 'Pacientes',
         url: '/pacientes/consultar',
-        iconComponent: { name: 'cil-notes' },
+        iconComponent: { name: 'cilPeople' },
     },
     {
         name: 'Tamizaje',

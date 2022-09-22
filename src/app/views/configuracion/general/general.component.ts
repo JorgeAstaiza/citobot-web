@@ -17,17 +17,31 @@ import { UsuarioService } from '../../../shared/services/usuario.service';
 export class GeneralComponent implements OnInit {
 
     public formulario!: FormGroup;
-    public isCheckedVph: boolean = true;
-    public msmActualizado: string = 'Actualizado Exitosamente!';
-    public idConfiguracion: number = 0;
-    public idConfiguracionVph!: number;
-    public estadoConfiguracionVph: string | null = '';
-    private id_Config_Habilitar_Vph: number = 1; // Id de la configuración
-    private id_Config_Habilitar_Modo: number = 7; // Id de la configuración
-    public estaHabilitado: boolean = false;
     public usuario: any;
-    public isCheckedModo: boolean = true;
-    public idConfiguracionModo!: number;
+
+    private ID_CONFIGURACION_VPH: number = 1;  // Id de la configuración del VPH
+    private ID_CONFIGURACION_MODO: number = 7; // Id de la configuración del MODO
+
+    public isCheckedVph: boolean = true;
+    public modoSeleccionado: string = 'Validación';
+
+    public idConfiguracionUsuarioVph!: number;
+    public idConfiguracionUsuarioModo!: number;
+
+    public estadoConfiguracionVph: string | null = '';
+    public estadoConfiguracionModo: string | null = '';
+
+    public idConfiguracion: number = 0;
+    public estaHabilitado: boolean = false;
+
+    public msmActualizado: string = 'Actualizado Exitosamente!';
+
+    // Listas estáticas
+    public modos = [
+        'Validación',
+        'Entrenamiento'
+    ];
+
     //public isCheckedCamara: boolean = true;
 
     constructor(private _fb: FormBuilder,
@@ -38,41 +52,28 @@ export class GeneralComponent implements OnInit {
     ngOnInit(): void {
 
         this.contruir_formulario();
-        this.verificarConfiguracionVphEnLocalStorage();
+        this.verificarConfiguracionesEnLocalStorage();
 
         // Obtener los datos del usuario logueado
-        this.usuarioSvc.getUsuarioLogueado().subscribe((usuario) => this.usuario = usuario);
-    }
+        this.usuarioSvc.getUsuarioLogueado().subscribe((usuario) => {
+            this.usuario = usuario;
 
-    private verificarConfiguracionVphEnLocalStorage() {
+            this.obtenerConfuIdModo(this.usuario);
 
-        const configuracionVph = JSON.parse(localStorage.getItem('configuracionVph')!);
-
-        this.idConfiguracionVph = configuracionVph.id;
-        this.estadoConfiguracionVph = configuracionVph.estado;
-
-        // Convierta el string de la configuración a tipo boolean
-        this.estadoConfiguracionVph === 'true'
-            ? this.estaHabilitado = true
-            : this.estaHabilitado = false;
-
-        // Marco el vph
-        this.llenarForm(this.estaHabilitado);
+        });
     }
 
     private contruir_formulario(): void {
 
         this.formulario = this._fb.group({
             vph: [true, [Validators.required]],
-            modo: [true, [Validators.required]],
-            /* camara: [true, [Validators.required]], */
+            modo: ['Validación', [Validators.required]],
         });
 
         this.formulario.valueChanges.subscribe(formulario => {
 
             this.isCheckedVph = formulario.vph;
-            this.isCheckedModo = formulario.modo;
-            // this.isCheckedCamara = formulario.camara
+            this.modoSeleccionado = formulario.modo;
 
             console.log('formulario: ', formulario);
 
@@ -80,46 +81,86 @@ export class GeneralComponent implements OnInit {
 
     }
 
-    private llenarForm(estaHabilitado: boolean): void {
+    private obtenerConfuIdModo(usuario: any) {
+
+        this._configuracionxUsuarioSvc.getConfiguracionxIdentificacionAndIdConfig(usuario.per_identificacion, this.ID_CONFIGURACION_MODO)
+            .subscribe((res) => {
+
+                console.log('ConfuIdModo: ', res);
+                this.idConfiguracionUsuarioModo = res.objetoRespuesta[0].confu_id;
+
+            });
+    }
+
+    private verificarConfiguracionesEnLocalStorage() {
+
+        try {
+            // Configuración del Vph
+            //--------------------------------------------
+            const configuracionVph = JSON.parse(localStorage.getItem('configuracionVph')!);
+
+            this.idConfiguracionUsuarioVph = configuracionVph.id;
+            this.estadoConfiguracionVph = configuracionVph.estado;
+
+            // Convierta el string de la configuración a tipo boolean
+            this.estadoConfiguracionVph === 'true'
+                ? this.estaHabilitado = true
+                : this.estaHabilitado = false;
+
+
+            // Configuración del Modo
+            //--------------------------------------------
+            const configuracionModo = JSON.parse(localStorage.getItem('configuracionModo')!);
+            this.idConfiguracionUsuarioModo = configuracionModo.id;
+            this.estadoConfiguracionModo = configuracionModo.estado;
+
+            // Marco el vph y modo en el formulario
+            this.llenarForm(this.estaHabilitado, this.estadoConfiguracionModo!);
+
+        } catch (error) {
+            console.log('Error: ', error);
+
+        }
+
+    }
+
+    private llenarForm(estaHabilitado: boolean, estadoConfiguracionModo: string): void {
         this.formulario.patchValue({ vph: estaHabilitado })
+        this.formulario.patchValue({ modo: estadoConfiguracionModo })
     }
 
     public save(): void {
 
-        // Guardar la configuración en el localstorage
-
-        /* VPH */
+        // Guardar la configuración en el localStorage
+        //--------------------------------------------
         const configuracionVph = {
-            id: this.idConfiguracionVph,
+            id: this.idConfiguracionUsuarioVph,
             estado: this.isCheckedVph + ""
         }
         localStorage.setItem('configuracionVph', JSON.stringify(configuracionVph));
 
-        /* MODO */
         const configuracionModo = {
-            id: this.idConfiguracionModo,
-            estado: this.isCheckedModo + ""
+            id: this.idConfiguracionUsuarioModo,
+            estado: this.modoSeleccionado
         }
         localStorage.setItem('configuracionModo', JSON.stringify(configuracionModo));
 
 
         // Guardo la configuración el la bd
-
-        /* VPH */
+        //--------------------------------------------
         const objVph: ConfiguracionXUsuario = {
             confu_usu_per_identificacion: this.usuario.per_identificacion,
-            confu_conf_id: this.id_Config_Habilitar_Vph,
+            confu_conf_id: this.ID_CONFIGURACION_VPH,
             confu_estado: this.isCheckedVph + ""
         };
 
-        /* MODO */
         const objModo: ConfiguracionXUsuario = {
             confu_usu_per_identificacion: this.usuario.per_identificacion,
-            confu_conf_id: this.id_Config_Habilitar_Modo,
-            confu_estado: this.isCheckedModo + ""
+            confu_conf_id: this.ID_CONFIGURACION_MODO,
+            confu_estado: this.modoSeleccionado
         };
 
-        this._configuracionxUsuarioSvc.updateConfiguracionxUsuario(this.idConfiguracionVph, objVph).subscribe((res) => {
+        this._configuracionxUsuarioSvc.updateConfiguracionxUsuario(this.idConfiguracionUsuarioVph, objVph).subscribe((res) => {
 
             if (res.codigoRespuesta === 0) {
 
@@ -129,7 +170,7 @@ export class GeneralComponent implements OnInit {
             console.log(res);
         });
 
-        this._configuracionxUsuarioSvc.updateConfiguracionxUsuario(this.idConfiguracionModo, objModo).subscribe((res) => {
+        this._configuracionxUsuarioSvc.updateConfiguracionxUsuario(this.idConfiguracionUsuarioModo, objModo).subscribe((res) => {
 
             if (res.codigoRespuesta === 0) {
 

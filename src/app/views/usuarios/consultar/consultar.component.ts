@@ -61,7 +61,6 @@ export class ConsultarComponent implements OnInit {
             if (res.objetoRespuesta.length) {
                 this.apiResponse = res;
                 this.dataUsuarios = res.objetoRespuesta;
-                console.log(res);
 
                 // Ordenaré alfabeticamente a los usuarios por el primer nombre 
                 this.dataUsuarios.sort(sortFunctionUsuarios);
@@ -73,23 +72,6 @@ export class ConsultarComponent implements OnInit {
         });
     }
 
-    /* public onChange(event: Event) {
-
-        const filterValue = (event.target as HTMLInputElement).value;
-        console.log('filteredValue: ', filterValue.toString());
-
-        let filteredData = _.filter(this.apiResponse, (item) => {
-
-            item = JSON.parse(JSON.stringify(item));
-
-
-            return item.per_identificacion === filterValue;
-        })
-
-        this.dataSource = new MatTableDataSource(filteredData)
-    } */
-
-
     applyFilter(event: Event) {
         const filterValue = (event.target as HTMLInputElement).value;
         this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -98,8 +80,6 @@ export class ConsultarComponent implements OnInit {
             this.dataSource.paginator.firstPage();
         }
     }
-
-
 
     public filtrarData() {
         const id = this.formulario.get('identificacion')?.value;
