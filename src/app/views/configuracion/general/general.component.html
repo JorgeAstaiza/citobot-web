@@ -49,6 +49,16 @@
                                 </td>
                             </tr>
 
+                            <!-- Configurar Modo -->
+                            <tr>
+                                <td> Modo </td>
+                                <td>
+                                    <mat-slide-toggle formControlName="modo">
+                                        {{isCheckedModo === true ? '( VALIDACIÓN )' : '( ENTRENAMIENTO )'}}
+                                    </mat-slide-toggle>
+                                </td>
+                            </tr>
+
                             <!-- Configurar Camara -->
                             <!--  <tr>
                                         <td> Habilitar Camara </td>

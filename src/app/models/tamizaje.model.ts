@@ -1,9 +1,9 @@
 export interface Tamizaje {
 
-    tam_id?: number;
-    tam_pac_per_identificacion: string;
-    tam_usu_per_identificacion: string;
-    tam_fecha: Date;
+    tam_id?: number | undefined;
+    tam_pac_per_identificacion?: string;
+    tam_usu_per_identificacion?: string;
+    tam_fecha: Date | string;
     tam_contraste: string;
     tam_vph: string;
     tam_vph_no_info?: number;

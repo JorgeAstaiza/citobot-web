@@ -27,11 +27,7 @@ export class ConsultarComponent implements OnInit, OnDestroy {
         end: new FormControl(),
     });
 
-    displayedColumns: string[] = [
-        'Identificacion',
-        'Fecha',
-        'Mensaje',
-        'Acciones',
+    displayedColumns: string[] = ['Identificacion', 'Fecha', 'Nivel', 'Acciones',
     ];
     dataSource = new MatTableDataSource();
 
@@ -50,6 +46,7 @@ export class ConsultarComponent implements OnInit, OnDestroy {
     ];
     public todayDate: Date = new Date();
     dataTamizaje: any[] = [];
+
     modalDetalle = false;
     detalleInfoTamizaje: any = [];
 
@@ -169,7 +166,9 @@ export class ConsultarComponent implements OnInit, OnDestroy {
                 console.log(res);
 
                 if (res.codigoRespuesta === 0) {
+
                     this.dataTamizaje = res.objetoRespuesta;
+
                     // Ordenaré por fecha los tamizajes
                     this.dataTamizaje.sort(sortFunctionTamizajes);
                     this.dataSource = new MatTableDataSource(this.dataTamizaje);

@@ -23,8 +23,11 @@ export class GeneralComponent implements OnInit {
     public idConfiguracionVph!: number;
     public estadoConfiguracionVph: string | null = '';
     private id_Config_Habilitar_Vph: number = 1; // Id de la configuración
+    private id_Config_Habilitar_Modo: number = 7; // Id de la configuración
     public estaHabilitado: boolean = false;
     public usuario: any;
+    public isCheckedModo: boolean = true;
+    public idConfiguracionModo!: number;
     //public isCheckedCamara: boolean = true;
 
     constructor(private _fb: FormBuilder,
@@ -55,63 +58,27 @@ export class GeneralComponent implements OnInit {
 
         // Marco el vph
         this.llenarForm(this.estaHabilitado);
-
-        //this.estadoConfiguracionVph = configuracionVph?.estado;
     }
-
-    // Esto es solo cuando el usuario ingresa por primera vez
-    /* private verificarConfiguracionVphEnBd(usuario: any): void {
-
-        this._configuracionxUsuarioSvc.getConfiguracionxIdentificacionAndIdConfig(usuario.per_identificacion, this.id_Config_Habilitar_Vph).subscribe(configuracion => {
-
-            this.idConfiguracionVph = configuracion.objetoRespuesta[0].confu_id;
-            this.estadoConfiguracionVph = configuracion.objetoRespuesta[0].confu_estado;
-
-            // Convierta el string de la configuración a tipo boolean
-            this.estadoConfiguracionVph === 'true'
-                ? this.estaHabilitado = true
-                : this.estaHabilitado = false;
-
-            // Marco el vph
-            this.llenarForm(this.estaHabilitado);
-        });
-
-    } */
 
     private contruir_formulario(): void {
 
         this.formulario = this._fb.group({
             vph: [true, [Validators.required]],
+            modo: [true, [Validators.required]],
             /* camara: [true, [Validators.required]], */
         });
 
         this.formulario.valueChanges.subscribe(formulario => {
 
-            this.isCheckedVph = formulario.vph
+            this.isCheckedVph = formulario.vph;
+            this.isCheckedModo = formulario.modo;
             // this.isCheckedCamara = formulario.camara
+
+            console.log('formulario: ', formulario);
+
         });
 
     }
-
-    /* private obtenerConfiguraciones(): void {
-
-        // Verificar la configuración que se estableció del Vph en el módulo de configuraciones
-        this._configuracionSvc.getConfiguracionById(this.id_Config_Habilitar_Vph).subscribe(configuracion => {
-
-            this.idConfiguracion = configuracion.objetoRespuesta[0].conf_id;
-            this.configuracionVph = configuracion.objetoRespuesta[0].conf_estado;
-            console.log('this.configuracionVph Recibida: ', this.configuracionVph);
-
-            // Convierta el string de la configuración a tipo boolean
-            this.configuracionVph === 'true'
-                ? this.estaHabilitado = true
-                : this.estaHabilitado = false;
-
-            // Marco el vph
-            this.llenarForm(this.estaHabilitado);
-        });
-
-    } */
 
     private llenarForm(estaHabilitado: boolean): void {
         this.formulario.patchValue({ vph: estaHabilitado })
@@ -120,21 +87,49 @@ export class GeneralComponent implements OnInit {
     public save(): void {
 
         // Guardar la configuración en el localstorage
+
+        /* VPH */
         const configuracionVph = {
             id: this.idConfiguracionVph,
             estado: this.isCheckedVph + ""
         }
         localStorage.setItem('configuracionVph', JSON.stringify(configuracionVph));
 
+        /* MODO */
+        const configuracionModo = {
+            id: this.idConfiguracionModo,
+            estado: this.isCheckedModo + ""
+        }
+        localStorage.setItem('configuracionModo', JSON.stringify(configuracionModo));
+
 
         // Guardo la configuración el la bd
-        const objEnviar: ConfiguracionXUsuario = {
+
+        /* VPH */
+        const objVph: ConfiguracionXUsuario = {
             confu_usu_per_identificacion: this.usuario.per_identificacion,
             confu_conf_id: this.id_Config_Habilitar_Vph,
             confu_estado: this.isCheckedVph + ""
         };
 
-        this._configuracionxUsuarioSvc.updateConfiguracionxUsuario(this.idConfiguracionVph, objEnviar).subscribe((res) => {
+        /* MODO */
+        const objModo: ConfiguracionXUsuario = {
+            confu_usu_per_identificacion: this.usuario.per_identificacion,
+            confu_conf_id: this.id_Config_Habilitar_Modo,
+            confu_estado: this.isCheckedModo + ""
+        };
+
+        this._configuracionxUsuarioSvc.updateConfiguracionxUsuario(this.idConfiguracionVph, objVph).subscribe((res) => {
+
+            if (res.codigoRespuesta === 0) {
+
+                // Guardo la configuración por el usuario.
+                this._snackbar.status(707, this.msmActualizado);
+            }
+            console.log(res);
+        });
+
+        this._configuracionxUsuarioSvc.updateConfiguracionxUsuario(this.idConfiguracionModo, objModo).subscribe((res) => {
 
             if (res.codigoRespuesta === 0) {
 

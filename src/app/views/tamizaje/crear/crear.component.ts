@@ -313,7 +313,7 @@ export class CrearComponent implements OnInit {
                 tam_fecha: this.todayDate,
                 tam_contraste: this.formulario.get('contraste')?.value,
                 tam_vph: this.tam_vph,
-                tam_niv_id: 18, // TODO: Cambiar este nivel de riesgo cuando ya sepamos cual será el id a registrar, de momento será ""
+                tam_niv_id: 1, // TODO: Cambiar este nivel de riesgo cuando ya sepamos cual será el id a registrar, de momento será el más bajo
             };
 
             this.saveTamizaje(newTamizaje);

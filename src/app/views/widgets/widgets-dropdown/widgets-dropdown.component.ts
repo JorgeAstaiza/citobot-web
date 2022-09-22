@@ -161,6 +161,8 @@ export class WidgetsDropdownComponent implements OnInit, AfterContentInit {
     // Tamizajes
     private obtenerTotalTamizajes(): void {
         this.tamizajeSvc.getAllTamizajes().subscribe((res) => {
+            console.log('Tamizajes: ', res);
+
             if (res.objetoRespuesta.length) {
                 this.totalTamizajes = res.objetoRespuesta.length;
             }

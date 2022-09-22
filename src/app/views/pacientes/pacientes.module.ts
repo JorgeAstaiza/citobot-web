@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 
 import { ButtonModule, CardModule, FormModule, GridModule, TableModule, ToastModule } from '@coreui/angular';
 import { IconModule } from '@coreui/icons-angular';
+import { NgxMaskModule } from 'ngx-mask';
 import { AngularMaterialModule } from 'src/app/shared/angular-material/angular-material.module';
 import { ConsultarComponent } from './consultar/consultar.component';
 import { CrearComponent } from './crear/crear.component';
@@ -23,7 +24,8 @@ import { PacientesRoutingModule } from './pacientes-routing.module';
         TableModule,
         CardModule,
         IconModule,
-        ToastModule
+        ToastModule,
+        NgxMaskModule.forChild()
     ]
 })
 export class PacientesModule { }

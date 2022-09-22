@@ -97,7 +97,8 @@
                                 <mat-label for="per_identificacion">
                                     <mat-icon>sell</mat-icon> Nº. de Identificación:
                                 </mat-label>
-                                <input formControlName="per_identificacion" type="text" matInput #input />
+                                <input formControlName="per_identificacion" type="text" mask="separator"
+                                    thousandSeparator="." matInput #input />
                             </mat-form-field>
                         </div>
                     </c-col>

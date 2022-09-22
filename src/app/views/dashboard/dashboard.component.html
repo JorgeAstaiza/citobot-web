@@ -1,6 +1,9 @@
-<app-widgets-dropdown></app-widgets-dropdown>
+<app-widgets-brand [withCharts]="true"></app-widgets-brand>
 
-<c-card class="mb-4">
+<!-- <app-widgets-dropdown></app-widgets-dropdown> -->
+
+
+<!-- <c-card class="mb-4">
     <c-card-body>
         <c-row>
             <c-col sm="5">
@@ -30,6 +33,7 @@
                 </form>
             </c-col>
         </c-row>
+
         <c-chart [data]="mainChart.data" [height]="300" [ngStyle]="{'marginTop.px': 40}" [options]="mainChart.options"
             [type]="mainChart.type">
             Main chart
@@ -75,9 +79,9 @@
         </c-row>
     </c-card-footer>
 </c-card>
-
-<!-- <app-widgets-brand [withCharts]="true"></app-widgets-brand>
  -->
+
+
 <!-- <c-row>
     <c-col xs>
         <c-card class="mb-4">
