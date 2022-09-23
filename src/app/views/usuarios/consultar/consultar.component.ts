@@ -117,7 +117,7 @@ export class ConsultarComponent implements OnInit {
     }
 
     public inactivarUsuario(usuario: Usuario) {
-        console.log('usuario: ' + usuario);
+        //console.log('usuario: ' + usuario);
 
         console.log(usuario);
         if (usuario.usu_per_identificacion) {
@@ -134,7 +134,7 @@ export class ConsultarComponent implements OnInit {
             this.usuarioService
                 .changeStateUser(+usuario.usu_per_identificacion, objEnviar)
                 .subscribe((res) => {
-                    console.log(res);
+                    //console.log(res);
                     if (res.codigoRespuesta === 0) {
                         this.getAllUsuarios();
                     }

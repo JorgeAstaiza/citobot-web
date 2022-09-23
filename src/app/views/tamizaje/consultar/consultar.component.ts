@@ -135,7 +135,7 @@ export class ConsultarComponent implements OnInit, OnDestroy {
             this.formulario.patchValue({ identificacion: '' });
             this.rangoFechasTamizajes.reset();
 
-            console.log('Tipo Seleccionado: ', tipoId);
+            //console.log('Tipo Seleccionado: ', tipoId);
             this.tamizajeService.getTamizajeByTipoId(tipoId).subscribe((res) => {
                 if (res.codigoRespuesta === 0) {
                     this.dataTamizaje = res.objetoRespuesta;
@@ -163,7 +163,6 @@ export class ConsultarComponent implements OnInit, OnDestroy {
         this.tamizajeService
             .getTamizajeByDate(fechaInicio, fechaFin)
             .subscribe((res) => {
-                console.log(res);
 
                 if (res.codigoRespuesta === 0) {
 
@@ -184,14 +183,13 @@ export class ConsultarComponent implements OnInit, OnDestroy {
         const fechaInicial = this.formulario.get('fechaInicial')?.value;
         const fechaFinal = this.formulario.get('fechaFinal')?.value;
         const tipoId = this.formulario.get('tipoId')?.value;
-        console.log(fechaInicial);
+        //console.log(fechaInicial);
 
         if (fechaInicial && fechaFinal) {
-            console.log('Fecha Inicial: ', fechaInicial, 'Fecha Final: ', fechaFinal);
+            //console.log('Fecha Inicial: ', fechaInicial, 'Fecha Final: ', fechaFinal);
             this.tamizajeService
                 .getTamizajeByDate(fechaInicial, fechaFinal)
                 .subscribe((res) => {
-                    console.log(res);
 
                     if (res.codigoRespuesta === 0) {
                         this.dataTamizaje = res.objetoRespuesta;
@@ -204,7 +202,6 @@ export class ConsultarComponent implements OnInit, OnDestroy {
                 });
         }
         if (tipoId) {
-            console.log('Tipo Id: ', tipoId);
 
             this.tamizajeService.getTamizajeByTipoId(tipoId).subscribe((res) => {
                 if (res.codigoRespuesta === 0) {

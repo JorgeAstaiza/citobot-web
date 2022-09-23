@@ -161,7 +161,6 @@ export class WidgetsDropdownComponent implements OnInit, AfterContentInit {
     // Tamizajes
     private obtenerTotalTamizajes(): void {
         this.tamizajeSvc.getAllTamizajes().subscribe((res) => {
-            console.log('Tamizajes: ', res);
 
             if (res.objetoRespuesta.length) {
                 this.totalTamizajes = res.objetoRespuesta.length;
@@ -306,7 +305,7 @@ export class ChartSample implements AfterViewInit {
             // @ts-ignore
             setTimeout(() => {
                 const after = this.chartComponent?.chart?.data.datasets.length;
-                console.log('after', after);
+                //console.log('after', after);
             });
         }, 5000);
     }

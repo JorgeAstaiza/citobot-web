@@ -45,7 +45,7 @@ export class RegisterComponent implements OnInit {
 
     private getEnumRole() {
         this.enumService.getEnum('usuario', 'usu_rol').subscribe((res) => {
-            console.log(res.objetoRespuesta);
+            //console.log(res.objetoRespuesta);
         });
     }
 
@@ -60,7 +60,7 @@ export class RegisterComponent implements OnInit {
                 this.authService
                     .SignUp(email, password, this.formulario.value)
                     .then((result: any) => {
-                        console.log(result);
+                        //console.log(result);
                         if (result.user.uid) {
                             this.usuarioRegistrado = true;
                             this.saveUserLocalStorage();
@@ -84,7 +84,7 @@ export class RegisterComponent implements OnInit {
     }
 
     private saveUserLocalStorage() {
-        console.log(this.formulario.value);
+
         const objEnviar = {
             usu_per_identificacion: this.formulario.get('id')?.value,
             usu_usuario: this.formulario.get('userName')?.value,

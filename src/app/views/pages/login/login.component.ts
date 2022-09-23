@@ -44,7 +44,7 @@ export class LoginComponent implements OnInit {
 
                             try {
                                 this.authService.SignIn(email, password).then((res: any) => {
-                                    console.log('res login:', res);
+                                    //console.log('res login:', res);
                                 });
                             } catch (error) {
                                 console.log('Error: ', error);

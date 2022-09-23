@@ -171,13 +171,9 @@ export class CrearComponent implements OnInit, OnDestroy {
         this.subscription = this.pacienteService.pacienteConsultar.subscribe(
             (res) => {
                 if (res) {
-                    console.log('Formulario: ', res);
 
                     this.formulario.patchValue(res);
-
-                    console.log('res Paciente:' + JSON.stringify(res));
                     this.idEpsDespues = parseInt(JSON.stringify(res.pac_eps_id));
-                    console.log('id res Paciente' + this.idEpsDespues);
                 }
             }
         );
@@ -204,13 +200,11 @@ export class CrearComponent implements OnInit, OnDestroy {
     }
 
     public getIdEps(epsSeleccionada: string): void {
-        console.log('value epsSeleccionada: ' + epsSeleccionada);
-        console.log('value this.allEps: ' + JSON.stringify(this.allEps));
 
         for (const i in this.allEps) {
             if (this.allEps[i].eps_nombre === epsSeleccionada) {
                 this.idEps = this.allEps[i].eps_id;
-                console.log('this.idEps: ' + this.idEps);
+                //console.log('this.idEps: ' + this.idEps);
 
                 break;
             }
@@ -381,7 +375,7 @@ export class CrearComponent implements OnInit, OnDestroy {
                     if (res.codigoRespuesta === 0) {
                         this.savePaciente();
                     }
-                    console.log(res);
+                    //console.log(res);
                 });
             } else {
                 this.personaService
@@ -390,7 +384,7 @@ export class CrearComponent implements OnInit, OnDestroy {
                         if (res.codigoRespuesta === 0) {
                             this.savePaciente();
                         }
-                        console.log(res);
+                        //console.log(res);
                     });
             }
         } else {
@@ -443,16 +437,11 @@ export class CrearComponent implements OnInit, OnDestroy {
             pac_infecciones_ts: this.formulario.get('pac_infecciones_ts')?.value,
         };
 
-        console.log(
-            '🚀 ~ file: crear.component.ts ~ line 424 ~ CrearComponent ~ savePaciente ~ objEnviar',
-            objEnviar
-        );
         console.log('esActualizar: ', this.esActualizar);
 
         if (!this.esActualizar) {
-            console.log('🚀 ~ objEnviar Create', objEnviar);
+
             this.pacienteService.createPaciente(objEnviar).subscribe((res) => {
-                console.log('respuesta: ' + res);
 
                 if (res.codigoRespuesta === 0) {
                     this._snackbar.status(707, this.msmAgregado);
@@ -468,10 +457,9 @@ export class CrearComponent implements OnInit, OnDestroy {
                     this._snackbar.status(404);
                 }
 
-                console.log(res);
+                //console.log(res);
             });
         } else {
-            //console.log('Paciente Update: ' + JSON.stringify(objEnviar));
 
             this.pacienteService
                 .updatePaciente(this.idPaciente, objEnviar)
@@ -487,7 +475,7 @@ export class CrearComponent implements OnInit, OnDestroy {
                         this._snackbar.status(404);
                     }
 
-                    console.log(res);
+                    //console.log(res);
                 });
         }
     }

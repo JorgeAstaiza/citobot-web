@@ -101,7 +101,6 @@ export class ConsultarComponent implements OnInit {
     }
 
     public listaTamizajes(paciente: any) {
-        console.log(paciente);
         if (paciente) {
             this.tamizajeService.idPacienteTamizaje.next(
                 paciente.pac_per_identificacion

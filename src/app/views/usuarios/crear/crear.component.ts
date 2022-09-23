@@ -135,7 +135,7 @@ export class CrearComponent implements OnInit {
         this.subscription = this.usuarioService.usuarioConsultar.subscribe(
             (res) => {
                 if (res) {
-                    console.log('res Usuario: ' + JSON.stringify(res));
+                    //console.log('res Usuario: ' + JSON.stringify(res));
 
                     this.formulario.patchValue(res);
                 }
@@ -212,7 +212,7 @@ export class CrearComponent implements OnInit {
                         if (res.codigoRespuesta === 0) {
                             this.saveUsuario();
                         }
-                        console.log(res);
+                        //console.log(res);
                     });
             }
         } else {
@@ -260,7 +260,7 @@ export class CrearComponent implements OnInit {
                     this._snackbar.status(404);
                 }
 
-                console.log(res);
+                //console.log(res);
             });
         } else {
             //let email = this.formulario.get('usu_email')?.value;
@@ -282,7 +282,7 @@ export class CrearComponent implements OnInit {
                         this._snackbar.status(404);
                     }
 
-                    console.log(res);
+                    //console.log(res);
                 });
         }
     }
@@ -315,7 +315,7 @@ export class CrearComponent implements OnInit {
         this.authService
             .SignUp(newUser.email, newUser.password, newUser)
             .then((result: any) => {
-                console.log('saveUserInFirestore', result);
+                //console.log('saveUserInFirestore', result);
                 if (result.user.uid) {
                     accion === 'crear'
                         ? this._snackbar.status(707, this.msmAgregado)

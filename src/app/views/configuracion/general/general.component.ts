@@ -75,8 +75,6 @@ export class GeneralComponent implements OnInit {
             this.isCheckedVph = formulario.vph;
             this.modoSeleccionado = formulario.modo;
 
-            console.log('formulario: ', formulario);
-
         });
 
     }
@@ -84,12 +82,7 @@ export class GeneralComponent implements OnInit {
     private obtenerConfuIdModo(usuario: any) {
 
         this._configuracionxUsuarioSvc.getConfiguracionxIdentificacionAndIdConfig(usuario.per_identificacion, this.ID_CONFIGURACION_MODO)
-            .subscribe((res) => {
-
-                console.log('ConfuIdModo: ', res);
-                this.idConfiguracionUsuarioModo = res.objetoRespuesta[0].confu_id;
-
-            });
+            .subscribe((res) => this.idConfiguracionUsuarioModo = res.objetoRespuesta[0].confu_id);
     }
 
     private verificarConfiguracionesEnLocalStorage() {
@@ -167,7 +160,6 @@ export class GeneralComponent implements OnInit {
                 // Guardo la configuración por el usuario.
                 this._snackbar.status(707, this.msmActualizado);
             }
-            console.log(res);
         });
 
         this._configuracionxUsuarioSvc.updateConfiguracionxUsuario(this.idConfiguracionUsuarioModo, objModo).subscribe((res) => {
@@ -177,7 +169,6 @@ export class GeneralComponent implements OnInit {
                 // Guardo la configuración por el usuario.
                 this._snackbar.status(707, this.msmActualizado);
             }
-            console.log(res);
         });
 
     }

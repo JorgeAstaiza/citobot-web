@@ -49,15 +49,14 @@ export class CrearComponent implements OnInit {
     public tam_vph_booleano!: boolean;
     public idUltimoTamizaje: any;
     public estadoConfiguracionVph: string | null = '';
+    public estadoConfiguracionModo: string | null = '';
     public urlImagen: string = '';
     private msmAgregado: string = 'Agregado Exitosamente!';
     contrastes: string[] = [];
     public showWebcam = true;
     public allowCameraSwitch = true;
     public multipleWebcamsAvailable = false;
-    private nextWebcam: Subject<boolean | string> = new Subject<
-        boolean | string
-    >();
+    private nextWebcam: Subject<boolean | string> = new Subject<boolean | string>();
     public webcamImage: any = [];
     public deviceId!: string;
     // webcam snapshot trigger
@@ -83,22 +82,16 @@ export class CrearComponent implements OnInit {
         private enumService: EnumService
     ) {
         this.obtenerIdUsuario();
-        this.verificarConfiguracionVphEnLocalStorage();
+        this.verificarConfiguracionesEnLocalStorage();
         // Verificar la configuracón que se estableció del Vph en el módulo de configuraciones
         // Parametros de la url
         this.activatedRoute.params.subscribe((params: any) => {
             // Nuevo Tamizaje Con Plantilla
             if (params !== undefined) {
-                console.log('Params:', params.idPaciente);
+
                 this.paciente_identificacion = params.idPaciente;
-
-                console.log('Params:', params.vphTamizaje);
                 this.tam_vph = params.vphTamizaje;
-
-                console.log('Params:', params.contrasteTamizaje);
                 this.tam_contraste = params.contrasteTamizaje;
-
-                console.log('Params:', params.idTamizaje);
                 this.tam_id = params.idTamizaje;
 
                 this.obtenerNombreDelPaciente();
@@ -248,10 +241,17 @@ export class CrearComponent implements OnInit {
 
     }
 
-    private verificarConfiguracionVphEnLocalStorage() {
+    private verificarConfiguracionesEnLocalStorage() {
 
+        // Configuración del Vph
+        //--------------------------------------------
         const configuracionVph = JSON.parse(localStorage.getItem('configuracionVph')!);
         this.estadoConfiguracionVph = configuracionVph.estado;
+
+        // Configuración del Modo
+        //--------------------------------------------
+        const configuracionModo = JSON.parse(localStorage.getItem('configuracionModo')!);
+        this.estadoConfiguracionModo = configuracionModo.estado;
 
     }
 
@@ -277,8 +277,10 @@ export class CrearComponent implements OnInit {
     }
 
     public handleImage(webcamImage: WebcamImage): void {
+
+        const LIMITE_IMAGENES = 3;
         this.webcamImage.push(webcamImage);
-        if (this.webcamImage.length === 3) {
+        if (this.webcamImage.length === LIMITE_IMAGENES) {
             this.btnCapture = true;
         }
     }

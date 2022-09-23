@@ -100,8 +100,8 @@ export class DefaultHeaderComponent extends HeaderComponent {
         };
 
         this._configuracionxUsuarioSvc.createConfiguracionxUsuario(objEnviar).subscribe((respuesta) => {
-            console.log('configuracionx usuario create', respuesta);
 
+            //console.log('configuracionx usuario create', respuesta);
             if (respuesta.codigoRespuesta === 0) {
                 // Vuelvo a hacer la verificación para que se guarde la configuracion en el localStorage
                 this.verificarConfiguracionesEnBd(this.usuario);
