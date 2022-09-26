@@ -1,29 +1,84 @@
 <mat-card class="example-card">
-    <mat-card-header>
-        <div mat-card-avatar class="example-header-image"></div>
-        <mat-card-title>
-            {{ data.Tamizaje.per_tip_id }}: {{ data.Tamizaje.per_identificacion }}
-        </mat-card-title>
-        <mat-card-subtitle>{{ data.NombrePaciente | titlecase }}</mat-card-subtitle>
-    </mat-card-header>
-    <img class="img_tarjeta" mat-card-image src="{{ imgFromFtp ? imgFromFtp : 'assets/img/brand/svg-spinner.svg' }}" />
-    <mat-card-content>
-        <ul>
-            <li>
-                <strong>Fecha:</strong>
-                {{ data.Tamizaje.tam_fecha | date: "yyyy-MM-dd":"UTC" }}
-            </li>
-            <li>
-                <strong>Contraste:</strong> {{ data.Tamizaje.tam_contraste }}
-            </li>
-            <li *ngIf="estadoConfiguracionVph === 'true'">
-                <strong>Vph: </strong> {{ data.Tamizaje.tam_vph }}
-            </li>
-        </ul>
-    </mat-card-content>
-    <mat-card-actions style="text-align: center">
-        <button (click)="onNoClick()" mat-button>
-            <mat-icon>clear</mat-icon> Cerrar
-        </button>
-    </mat-card-actions>
+  <mat-card-header>
+    <div mat-card-avatar class="example-header-image"></div>
+    <mat-card-title>
+      {{ data.Tamizaje.per_tip_id }}: {{ data.Tamizaje.per_identificacion }}
+    </mat-card-title>
+    <mat-card-subtitle>{{ data.NombrePaciente | titlecase }}</mat-card-subtitle>
+  </mat-card-header>
+  <img
+    *ngIf="!multipleImagenes"
+    class="img_tarjeta"
+    mat-card-image
+    src="{{ imgFromFtp ? imgFromFtp : 'assets/img/brand/svg-spinner.svg' }}"
+  />
+
+  <c-carousel *ngIf="multipleImagenes">
+    <c-carousel-indicators></c-carousel-indicators>
+    <c-carousel-inner>
+      <c-carousel-item>
+        <img
+          src="{{ imag1 ? imag1 : 'assets/img/brand/svg-spinner.svg' }}"
+          class="img_tarjeta"
+          loading="lazy"
+        />
+      </c-carousel-item>
+      <c-carousel-item>
+        <img
+          src="{{ imag2 ? imag2 : 'assets/img/brand/svg-spinner.svg' }}"
+          class="img_tarjeta"
+          loading="lazy"
+        />
+      </c-carousel-item>
+      <c-carousel-item>
+        <img
+          src="{{ imag3 ? imag3 : 'assets/img/brand/svg-spinner.svg' }}"
+          class="img_tarjeta"
+          loading="lazy"
+        />
+      </c-carousel-item>
+      <c-carousel-item>
+        <img
+          src="{{ imag4 ? imag4 : 'assets/img/brand/svg-spinner.svg' }}"
+          class="img_tarjeta"
+          loading="lazy"
+        />
+      </c-carousel-item>
+      <c-carousel-item>
+        <img
+          src="{{ imag5 ? imag5 : 'assets/img/brand/svg-spinner.svg' }}"
+          class="img_tarjeta"
+          loading="lazy"
+        />
+      </c-carousel-item>
+    </c-carousel-inner>
+    <c-carousel-control
+      [routerLink]
+      caption="Previous"
+      direction="prev"
+    ></c-carousel-control>
+    <c-carousel-control
+      [routerLink]
+      caption="Next"
+      direction="next"
+    ></c-carousel-control>
+  </c-carousel>
+
+  <mat-card-content>
+    <ul>
+      <li>
+        <strong>Fecha:</strong>
+        {{ data.Tamizaje.tam_fecha | date: "yyyy-MM-dd":"UTC" }}
+      </li>
+      <li><strong>Contraste:</strong> {{ data.Tamizaje.tam_contraste }}</li>
+      <li *ngIf="estadoConfiguracionVph === 'true'">
+        <strong>Vph: </strong> {{ data.Tamizaje.tam_vph }}
+      </li>
+    </ul>
+  </mat-card-content>
+  <mat-card-actions style="text-align: center">
+    <button (click)="onNoClick()" mat-button>
+      <mat-icon>clear</mat-icon> Cerrar
+    </button>
+  </mat-card-actions>
 </mat-card>

@@ -41,6 +41,13 @@ export class ImagenService {
     );
   }
 
+  getTotalImagenes(idTamizaje: number): Observable<any> {
+    return this.http.get<Imagen>(
+      `${this.enviromentUrl}/imagenes/total-img?id=${idTamizaje}`,
+      { headers: this.headers }
+    );
+  }
+
   createImagen(form: any): Observable<any> {
     return this.http.post<Imagen>(
       `${this.enviromentUrl}/imagenes/crear`,

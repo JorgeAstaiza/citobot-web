@@ -1,5 +1,5 @@
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 // Firebase services + environment module
 import { AngularFireModule } from '@angular/fire/compat';
@@ -15,40 +15,42 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TranslateModule } from '@ngx-translate/core';
 
 import {
-    AvatarModule,
-    BadgeModule,
-    BreadcrumbModule,
-    ButtonGroupModule,
-    ButtonModule,
-    CardModule,
-    DropdownModule,
-    FooterModule,
-    FormModule,
-    GridModule,
-    HeaderModule,
-    ListGroupModule,
-    NavModule,
-    ProgressModule,
-    SharedModule,
-    SidebarModule,
-    TabsModule,
-    UtilitiesModule
+	AvatarModule,
+	BadgeModule,
+	BreadcrumbModule,
+	ButtonGroupModule,
+	ButtonModule,
+	CardModule,
+	CarouselModule,
+	DropdownModule,
+	FooterModule,
+	FormModule,
+	GridModule,
+	HeaderModule,
+	ListGroupModule,
+	NavModule,
+	ProgressModule,
+	SharedModule,
+	SidebarModule,
+	TabsModule,
+	UtilitiesModule
 } from '@coreui/angular';
 import { IconModule, IconSetService } from '@coreui/icons-angular';
 import { NgToastModule } from 'ng-angular-popup';
 import { ImageCropperModule } from 'ngx-image-cropper';
 import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
+// Import app component
+import { NgxMaskModule } from 'ngx-mask';
 import {
-    PerfectScrollbarConfigInterface,
-    PerfectScrollbarModule, PERFECT_SCROLLBAR_CONFIG
+	PERFECT_SCROLLBAR_CONFIG,
+	PerfectScrollbarConfigInterface,
+	PerfectScrollbarModule
 } from 'ngx-perfect-scrollbar';
 //camara
 import { WebcamModule } from 'ngx-webcam';
 import { environment } from '../environments/environment';
 // Import routing module
 import { AppRoutingModule } from './app-routing.module';
-// Import app component
-import { NgxMaskModule } from 'ngx-mask';
 import { AppComponent } from './app.component';
 import { DefaultFooterComponent, DefaultHeaderComponent, DefaultLayoutComponent } from './containers';
 import { EpsInterceptor } from './interceptors/eps.interceptor';
@@ -62,89 +64,90 @@ import { ConfiguracionModule } from './views/configuracion/configuracion.module'
 import { NivelesRiesgoModule } from './views/niveles-riesgo/niveles-riesgo.module';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
-    suppressScrollX: true,
+  suppressScrollX: true,
 };
 
 const APP_CONTAINERS = [
-    DefaultFooterComponent,
-    DefaultHeaderComponent,
-    DefaultLayoutComponent,
+  DefaultFooterComponent,
+  DefaultHeaderComponent,
+  DefaultLayoutComponent,
 ];
 
 @NgModule({
-    declarations: [
-        AppComponent,
-        ...APP_CONTAINERS,
-        FilterPipe,
-        InstruccionesTamizajeComponent,
-        DetalleTamizajeComponent,
-    ],
-    imports: [
-        AngularMaterialModule,
-        BrowserModule,
-        BrowserAnimationsModule,
-        AppRoutingModule,
-        AvatarModule,
-        BreadcrumbModule,
-        FooterModule,
-        DropdownModule,
-        GridModule,
-        HeaderModule,
-        SidebarModule,
-        IconModule,
-        PerfectScrollbarModule,
-        NavModule,
-        ButtonModule,
-        FormModule,
-        UtilitiesModule,
-        ButtonGroupModule,
-        ReactiveFormsModule,
-        SidebarModule,
-        SharedModule,
-        TabsModule,
-        ListGroupModule,
-        ProgressModule,
-        BadgeModule,
-        ListGroupModule,
-        CardModule,
-        AngularFireModule.initializeApp(environment.firebase),
-        AngularFireAuthModule,
-        AngularFirestoreModule,
-        AngularFireDatabaseModule,
-        HttpClientModule,
-        ImageCropperModule,
-        NivelesRiesgoModule,
-        ConfiguracionModule,
-        NgToastModule,
-        NgxMaskModule.forRoot({ dropSpecialCharacters: true }), // Al guardar mantendrá la mascara
-        TranslateModule.forRoot(),
-        LoggerModule.forRoot({
-            serverLoggingUrl: '/api/logs',
-            level: NgxLoggerLevel.DEBUG,
-            serverLogLevel: NgxLoggerLevel.ERROR,
-        }),
-        WebcamModule
-    ],
-    providers: [
-        AuthService,
-        SnackbarToastService,
-        {
-            provide: LocationStrategy,
-            useClass: HashLocationStrategy,
-        },
-        {
-            provide: PERFECT_SCROLLBAR_CONFIG,
-            useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG,
-        },
-        {
-            provide: HTTP_INTERCEPTORS,
-            useClass: EpsInterceptor,
-            multi: true,
-        },
-        { provide: MAT_DATE_LOCALE, useValue: 'es-CO' }, // Calendarios en español y formato dd/mm/aaaa
-        IconSetService,
-        Title,
-    ],
-    bootstrap: [AppComponent],
+  declarations: [
+    AppComponent,
+    ...APP_CONTAINERS,
+    FilterPipe,
+    InstruccionesTamizajeComponent,
+    DetalleTamizajeComponent,
+  ],
+  imports: [
+    AngularMaterialModule,
+    BrowserModule,
+    BrowserAnimationsModule,
+    AppRoutingModule,
+    AvatarModule,
+    BreadcrumbModule,
+    FooterModule,
+    DropdownModule,
+    GridModule,
+    CarouselModule,
+    HeaderModule,
+    SidebarModule,
+    IconModule,
+    PerfectScrollbarModule,
+    NavModule,
+    ButtonModule,
+    FormModule,
+    UtilitiesModule,
+    ButtonGroupModule,
+    ReactiveFormsModule,
+    SidebarModule,
+    SharedModule,
+    TabsModule,
+    ListGroupModule,
+    ProgressModule,
+    BadgeModule,
+    ListGroupModule,
+    CardModule,
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFireAuthModule,
+    AngularFirestoreModule,
+    AngularFireDatabaseModule,
+    HttpClientModule,
+    ImageCropperModule,
+    NivelesRiesgoModule,
+    ConfiguracionModule,
+    NgToastModule,
+    NgxMaskModule.forRoot({ dropSpecialCharacters: true }), // Al guardar mantendrá la mascara
+    TranslateModule.forRoot(),
+    LoggerModule.forRoot({
+      serverLoggingUrl: '/api/logs',
+      level: NgxLoggerLevel.DEBUG,
+      serverLogLevel: NgxLoggerLevel.ERROR,
+    }),
+    WebcamModule,
+  ],
+  providers: [
+    AuthService,
+    SnackbarToastService,
+    {
+      provide: LocationStrategy,
+      useClass: HashLocationStrategy,
+    },
+    {
+      provide: PERFECT_SCROLLBAR_CONFIG,
+      useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: EpsInterceptor,
+      multi: true,
+    },
+    { provide: MAT_DATE_LOCALE, useValue: 'es-CO' }, // Calendarios en español y formato dd/mm/aaaa
+    IconSetService,
+    Title,
+  ],
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
