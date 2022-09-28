@@ -13,238 +13,223 @@ import { DetalleTamizajeComponent } from '../../../popus/detalle-tamizaje/detall
 import { TamizajeService } from '../../../shared/services/tamizaje.service';
 
 @Component({
-    selector: 'app-consultar',
-    templateUrl: './consultar.component.html',
-    styleUrls: ['./consultar.component.scss'],
+  selector: 'app-consultar',
+  templateUrl: './consultar.component.html',
+  styleUrls: ['./consultar.component.scss'],
 })
 export class ConsultarComponent implements OnInit, OnDestroy {
-    formulario!: FormGroup;
-    minDate = new Date(2022, 0, 1);
-    maxDate = new Date();
+  formulario!: FormGroup;
+  minDate = new Date(2022, 0, 1);
+  maxDate = new Date();
 
-    public rangoFechasTamizajes = new FormGroup({
-        start: new FormControl(),
-        end: new FormControl(),
+  public rangoFechasTamizajes = new FormGroup({
+    start: new FormControl(),
+    end: new FormControl(),
+  });
+
+  displayedColumns: string[] = ['Identificacion', 'Fecha', 'Nivel', 'Acciones'];
+  dataSource = new MatTableDataSource();
+
+  @ViewChild(MatSort, { static: true }) sort!: MatSort;
+  @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
+
+  public tiposDeDocumento: any = [
+    {
+      Abreviatura: 'CC',
+      Descripcion: 'C.C',
+    },
+    {
+      Abreviatura: 'TI',
+      Descripcion: 'T.I',
+    },
+  ];
+  public todayDate: Date = new Date();
+  dataTamizaje: any[] = [];
+
+  modalDetalle = false;
+  detalleInfoTamizaje: any = [];
+
+  public infoPaciente: any = [];
+  public nombreCompleto: any = '';
+
+  constructor(
+    private fb: FormBuilder,
+    private tamizajeService: TamizajeService,
+    private pacienteService: PacienteService,
+    private dialog: MatDialog
+  ) {}
+
+  ngOnInit(): void {
+    this.crearFormulario();
+    this.getTamizajeByPacienteComponent();
+
+    // Me subscribo a los cambios que ocurran en el rango de fechas
+    this.rangoFechasTamizajes.valueChanges.subscribe((fecha) => {
+      if (fecha.start !== null && fecha.end !== null) {
+        this.filtrarPorRangoDeFechas(fecha.start, fecha.end);
+      }
     });
+  }
+  ngOnDestroy(): void {
+    this.tamizajeService.idPacienteTamizaje.next(0);
+  }
 
-    displayedColumns: string[] = ['Identificacion', 'Fecha', 'Nivel', 'Acciones',
-    ];
-    dataSource = new MatTableDataSource();
+  applyFilter(event: Event) {
+    // Reseteo los demás filtros
+    this.formulario.patchValue({ tipoId: '' });
+    this.rangoFechasTamizajes.reset();
 
-    @ViewChild(MatSort, { static: true }) sort!: MatSort;
-    @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
 
-    public tiposDeDocumento: any = [
-        {
-            Abreviatura: 'CC',
-            Descripcion: 'C.C',
-        },
-        {
-            Abreviatura: 'TI',
-            Descripcion: 'T.I',
-        },
-    ];
-    public todayDate: Date = new Date();
-    dataTamizaje: any[] = [];
-
-    modalDetalle = false;
-    detalleInfoTamizaje: any = [];
-
-    public infoPaciente: any = [];
-    public nombreCompleto: any = '';
-
-    constructor(
-        private fb: FormBuilder,
-        private tamizajeService: TamizajeService,
-        private pacienteService: PacienteService,
-        private dialog: MatDialog
-    ) { }
-
-    ngOnInit(): void {
-        this.crearFormulario();
-        this.getTamizajeByPacienteComponent();
-
-        // Me subscribo a los cambios que ocurran en el rango de fechas
-        this.rangoFechasTamizajes.valueChanges.subscribe((fecha) => {
-            console.log('range Change', fecha);
-            if (fecha.start !== null && fecha.end !== null) {
-                this.filtrarPorRangoDeFechas(fecha.start, fecha.end);
-            }
-        });
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
     }
-    ngOnDestroy(): void {
-        this.tamizajeService.idPacienteTamizaje.next(0);
-    }
+  }
 
-    applyFilter(event: Event) {
+  private crearFormulario() {
+    this.formulario = this.fb.group({
+      identificacion: [null],
+      tipoId: [null],
+      start: [null],
+      end: [null],
+    });
+  }
 
-        // Reseteo los demás filtros
-        this.formulario.patchValue({ tipoId: '' });
-        this.rangoFechasTamizajes.reset();
+  private getTamizajeByPacienteComponent() {
+    this.tamizajeService.idPacienteTamizaje.subscribe((res) => {
+      if (res) {
+        this.formulario.get('identificacion')?.setValue(res);
+        this.filtrarData();
+      } else {
+        this.getAllTamizajes();
+      }
+    });
+  }
 
-        const filterValue = (event.target as HTMLInputElement).value;
-        this.dataSource.filter = filterValue.trim().toLowerCase();
+  public getAllTamizajes() {
+    this.formulario.reset();
+    this.tamizajeService.getAllTamizajes().subscribe((res) => {
+      this.dataTamizaje = res.objetoRespuesta;
 
-        if (this.dataSource.paginator) {
-            this.dataSource.paginator.firstPage();
+      // Ordenaré por fecha los tamizajes
+      this.dataTamizaje.sort(sortFunctionTamizajes);
+
+      this.dataSource = new MatTableDataSource(this.dataTamizaje);
+
+      this.dataSource.sort = this.sort;
+      this.dataSource.paginator = this.paginator;
+    });
+  }
+
+  public filtrarPorTipoIdentificacion(tipoId: any) {
+    if (tipoId == '') {
+      this.getAllTamizajes();
+    } else {
+      // Reseteo los demás filtros
+      this.formulario.patchValue({ identificacion: '' });
+      this.rangoFechasTamizajes.reset();
+
+      this.tamizajeService.getTamizajeByTipoId(tipoId).subscribe((res) => {
+        if (res.codigoRespuesta === 0) {
+          this.dataTamizaje = res.objetoRespuesta;
+          // Ordenaré por fecha los tamizajes
+          this.dataTamizaje.sort(sortFunctionTamizajes);
+          this.dataSource = new MatTableDataSource(this.dataTamizaje);
+
+          this.dataSource.sort = this.sort;
+          this.dataSource.paginator = this.paginator;
         }
+      });
     }
+  }
 
-    private crearFormulario() {
-        this.formulario = this.fb.group({
-            identificacion: [null],
-            tipoId: [null],
-            start: [null],
-            end: [null],
-        });
-    }
+  public filtrarPorRangoDeFechas(fechaStart: Date, fechaEnd: Date) {
+    // Reseteo los demás filtros
+    this.formulario.patchValue({ identificacion: '' });
+    this.formulario.patchValue({ tipoId: '' });
 
-    private getTamizajeByPacienteComponent() {
-        this.tamizajeService.idPacienteTamizaje.subscribe((res) => {
-            if (res) {
-                this.formulario.get('identificacion')?.setValue(res);
-                this.filtrarData();
-            } else {
-                this.getAllTamizajes();
-            }
-        });
-    }
+    let fechaInicio = formatDate(fechaStart, 'yyyy-MM-dd', 'en-US') + '';
+    let fechaFin = formatDate(fechaEnd, 'yyyy-MM-dd', 'en-US') + '';
 
-    public getAllTamizajes() {
-        this.formulario.reset();
-        this.tamizajeService.getAllTamizajes().subscribe((res) => {
-            //console.log('all tamizajes: ', res.objetoRespuesta);
+    this.tamizajeService
+      .getTamizajeByDate(fechaInicio, fechaFin)
+      .subscribe((res) => {
+        if (res.codigoRespuesta === 0) {
+          this.dataTamizaje = res.objetoRespuesta;
+
+          // Ordenaré por fecha los tamizajes
+          this.dataTamizaje.sort(sortFunctionTamizajes);
+          this.dataSource = new MatTableDataSource(this.dataTamizaje);
+
+          this.dataSource.sort = this.sort;
+          this.dataSource.paginator = this.paginator;
+        }
+      });
+  }
+
+  public filtrarData() {
+    //const identificacion = this.formulario.get('identificacion')?.value;
+    const fechaInicial = this.formulario.get('fechaInicial')?.value;
+    const fechaFinal = this.formulario.get('fechaFinal')?.value;
+    const tipoId = this.formulario.get('tipoId')?.value;
+    if (fechaInicial && fechaFinal) {
+      this.tamizajeService
+        .getTamizajeByDate(fechaInicial, fechaFinal)
+        .subscribe((res) => {
+          if (res.codigoRespuesta === 0) {
             this.dataTamizaje = res.objetoRespuesta;
-
-            // Ordenaré por fecha los tamizajes
-            this.dataTamizaje.sort(sortFunctionTamizajes);
 
             this.dataSource = new MatTableDataSource(this.dataTamizaje);
 
             this.dataSource.sort = this.sort;
             this.dataSource.paginator = this.paginator;
+          }
         });
     }
+    if (tipoId) {
+      this.tamizajeService.getTamizajeByTipoId(tipoId).subscribe((res) => {
+        if (res.codigoRespuesta === 0) {
+          this.dataTamizaje = res.objetoRespuesta;
 
-    public filtrarPorTipoIdentificacion(tipoId: any) {
-        if (tipoId == '') {
-            this.getAllTamizajes();
-        } else {
+          this.dataSource = new MatTableDataSource(this.dataTamizaje);
 
-            // Reseteo los demás filtros
-            this.formulario.patchValue({ identificacion: '' });
-            this.rangoFechasTamizajes.reset();
-
-            //console.log('Tipo Seleccionado: ', tipoId);
-            this.tamizajeService.getTamizajeByTipoId(tipoId).subscribe((res) => {
-                if (res.codigoRespuesta === 0) {
-                    this.dataTamizaje = res.objetoRespuesta;
-                    // Ordenaré por fecha los tamizajes
-                    this.dataTamizaje.sort(sortFunctionTamizajes);
-                    this.dataSource = new MatTableDataSource(this.dataTamizaje);
-
-                    this.dataSource.sort = this.sort;
-                    this.dataSource.paginator = this.paginator;
-                }
-            });
+          this.dataSource.sort = this.sort;
+          this.dataSource.paginator = this.paginator;
         }
+      });
     }
+  }
 
-    public filtrarPorRangoDeFechas(fechaStart: Date, fechaEnd: Date) {
+  public async verDetalleTamizaje(tamizaje: Tamizaje) {
+    this.detallePaciente(tamizaje);
+  }
 
-        // Reseteo los demás filtros
-        this.formulario.patchValue({ identificacion: '' });
-        this.formulario.patchValue({ tipoId: '' });
+  private async detallePaciente(tamizaje: Tamizaje) {
+    await this.pacienteService
+      .getPacienteById(tamizaje.per_identificacion!)
+      .subscribe((res) => {
+        if (res.codigoRespuesta === 0) {
+          this.infoPaciente = res.objetoRespuesta[0];
+          this.nombreCompleto =
+            res.objetoRespuesta[0].per_primer_nombre +
+            ' ' +
+            res.objetoRespuesta[0]?.per_otros_nombres +
+            ' ' +
+            res.objetoRespuesta[0].per_primer_apellido +
+            ' ' +
+            res.objetoRespuesta[0]?.per_segundo_apellido;
 
-
-        let fechaInicio = formatDate(fechaStart, 'yyyy-MM-dd', 'en-US') + '';
-        let fechaFin = formatDate(fechaEnd, 'yyyy-MM-dd', 'en-US') + '';
-
-        this.tamizajeService
-            .getTamizajeByDate(fechaInicio, fechaFin)
-            .subscribe((res) => {
-
-                if (res.codigoRespuesta === 0) {
-
-                    this.dataTamizaje = res.objetoRespuesta;
-
-                    // Ordenaré por fecha los tamizajes
-                    this.dataTamizaje.sort(sortFunctionTamizajes);
-                    this.dataSource = new MatTableDataSource(this.dataTamizaje);
-
-                    this.dataSource.sort = this.sort;
-                    this.dataSource.paginator = this.paginator;
-                }
-            });
-    }
-
-    public filtrarData() {
-        //const identificacion = this.formulario.get('identificacion')?.value;
-        const fechaInicial = this.formulario.get('fechaInicial')?.value;
-        const fechaFinal = this.formulario.get('fechaFinal')?.value;
-        const tipoId = this.formulario.get('tipoId')?.value;
-        //console.log(fechaInicial);
-
-        if (fechaInicial && fechaFinal) {
-            //console.log('Fecha Inicial: ', fechaInicial, 'Fecha Final: ', fechaFinal);
-            this.tamizajeService
-                .getTamizajeByDate(fechaInicial, fechaFinal)
-                .subscribe((res) => {
-
-                    if (res.codigoRespuesta === 0) {
-                        this.dataTamizaje = res.objetoRespuesta;
-
-                        this.dataSource = new MatTableDataSource(this.dataTamizaje);
-
-                        this.dataSource.sort = this.sort;
-                        this.dataSource.paginator = this.paginator;
-                    }
-                });
+          // Abro la ventana modal
+          this.dialog.open(DetalleTamizajeComponent, {
+            data: { Tamizaje: tamizaje, NombrePaciente: this.nombreCompleto },
+          });
         }
-        if (tipoId) {
+      });
+  }
 
-            this.tamizajeService.getTamizajeByTipoId(tipoId).subscribe((res) => {
-                if (res.codigoRespuesta === 0) {
-                    this.dataTamizaje = res.objetoRespuesta;
-
-                    this.dataSource = new MatTableDataSource(this.dataTamizaje);
-
-                    this.dataSource.sort = this.sort;
-                    this.dataSource.paginator = this.paginator;
-                }
-            });
-        }
-    }
-
-    public async verDetalleTamizaje(tamizaje: Tamizaje) {
-        this.detallePaciente(tamizaje);
-    }
-
-    private async detallePaciente(tamizaje: Tamizaje) {
-        await this.pacienteService
-            .getPacienteById(tamizaje.per_identificacion!)
-            .subscribe((res) => {
-                if (res.codigoRespuesta === 0) {
-                    this.infoPaciente = res.objetoRespuesta[0];
-                    this.nombreCompleto =
-                        res.objetoRespuesta[0].per_primer_nombre +
-                        ' ' +
-                        res.objetoRespuesta[0]?.per_otros_nombres +
-                        ' ' +
-                        res.objetoRespuesta[0].per_primer_apellido +
-                        ' ' +
-                        res.objetoRespuesta[0]?.per_segundo_apellido;
-
-                    // Abro la ventana modal
-                    this.dialog.open(DetalleTamizajeComponent, {
-                        data: { Tamizaje: tamizaje, NombrePaciente: this.nombreCompleto },
-                    });
-                }
-            });
-    }
-
-    public limpiarFiltros() {
-        this.rangoFechasTamizajes.reset();
-        this.ngOnInit();
-    }
+  public limpiarFiltros() {
+    this.rangoFechasTamizajes.reset();
+    this.ngOnInit();
+  }
 }

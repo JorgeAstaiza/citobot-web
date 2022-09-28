@@ -95,11 +95,11 @@ export class CrearComponent implements OnInit {
 
         this.obtenerImagenFtp(params.idTamizaje);
       }
-      this.checkImagen = new FormControl(null, Validators.required);
     });
   }
 
   ngOnInit(): void {
+    this.checkImagen = new FormControl(null);
     this.getEnumContrastes();
     WebcamUtil.getAvailableVideoInputs().then(
       (mediaDevices: MediaDeviceInfo[]) => {
@@ -117,7 +117,6 @@ export class CrearComponent implements OnInit {
       vph: [true],
       contraste: ['', [Validators.required]],
       foto: [null, [Validators.required]],
-      modo: [false],
     });
 
     this.formulario.get('vph')?.valueChanges.subscribe((value) => {
@@ -126,19 +125,20 @@ export class CrearComponent implements OnInit {
   }
 
   private changeModo() {
-    this.formulario.get('modo')?.valueChanges.subscribe((value) => {
-      this.modoPruebas = value;
-      if (value) {
-        this.LIMITE_IMAGENES = 5;
-        this.formulario.get('foto')?.clearValidators();
-        this.checkImagen.clearValidators();
-      } else {
-        this.LIMITE_IMAGENES = 3;
-        this.formulario.get('foto')?.setValidators([Validators.required]);
-        this.checkImagen.setValidators([Validators.required]);
-      }
-      this.formulario.updateValueAndValidity();
-    });
+    let modo: any = localStorage.getItem('configuracionModo');
+    modo = JSON.parse(modo);
+    if (modo?.estado === 'Entrenamiento') {
+      this.modoPruebas = true;
+      this.LIMITE_IMAGENES = 5;
+      this.formulario.get('foto')?.clearValidators();
+      this.checkImagen.clearValidators();
+    } else {
+      this.modoPruebas = false;
+      this.LIMITE_IMAGENES = 3;
+      this.formulario.get('foto')?.setValidators([Validators.required]);
+      this.checkImagen.setValidators([Validators.required]);
+    }
+    this.formulario.updateValueAndValidity();
   }
 
   private getEnumContrastes() {
@@ -294,6 +294,15 @@ export class CrearComponent implements OnInit {
   }
 
   public save(): void {
+    if (this.modoPruebas && this.webcamImage.length !== this.LIMITE_IMAGENES) {
+      this._snackbar.status(
+        101,
+        '',
+        'Debes tener al menos 5 imagenes en modo prueba'
+      );
+      return;
+    }
+
     if (this.formulario.valid && this.checkImagen.valid) {
       this.formulario.get('vph')?.value === true
         ? (this.tam_vph = 'Positivo')

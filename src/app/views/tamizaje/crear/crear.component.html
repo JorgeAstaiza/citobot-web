@@ -64,13 +64,6 @@
               </mat-slide-toggle>
             </div>
           </c-col>
-          <c-col>
-            <div *ngIf="estadoConfiguracionVph === 'true'" class="mt-3">
-              <!-- Vph -->
-              Modo pruebas
-              <mat-slide-toggle formControlName="modo"> </mat-slide-toggle>
-            </div>
-          </c-col>
         </c-row>
         <webcam
           [height]="550"
@@ -106,7 +99,7 @@
             <mat-radio-group class="mt-2">
               <c-row class="mt-1">
                 <c-col>
-                  <div class="mb-3">
+                  <div class="mb-3 ctn-img" *ngIf="!modoPruebas">
                     <mat-radio-button
                       *ngFor="let src of webcamImage; let idx = index"
                       (click)="setPhoto(idx)"
@@ -116,7 +109,7 @@
                       name="checkImagen"
                       ngDefaultControl
                       >Imagen
-                      {{ idx }}
+                      {{ idx + 1 }}
                       <mat-card class="card-imagen">
                         <!-- Previsualización de Imagenes -->
                         <img
@@ -126,6 +119,19 @@
                         />
                       </mat-card>
                     </mat-radio-button>
+                  </div>
+                  <div class="mb-3 ctn-img" *ngIf="modoPruebas">
+                    <mat-card
+                      class="card-imagen"
+                      *ngFor="let src of webcamImage; let idx = index"
+                    >
+                      <!-- Previsualización de Imagenes -->
+                      <img
+                        [src]="src.imageAsDataUrl"
+                        height="330"
+                        width="330"
+                      />
+                    </mat-card>
                   </div>
                 </c-col>
               </c-row>
