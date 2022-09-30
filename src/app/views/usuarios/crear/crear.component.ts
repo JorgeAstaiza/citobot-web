@@ -18,341 +18,341 @@ import { ProfesionService } from '../../../shared/services/profesion.service';
 import { transformEnum } from '../../../util/enum.util';
 
 @Component({
-    selector: 'app-crear',
-    templateUrl: './crear.component.html',
-    styleUrls: ['./crear.component.scss'],
+  selector: 'app-crear',
+  templateUrl: './crear.component.html',
+  styleUrls: ['./crear.component.scss'],
 })
 export class CrearComponent implements OnInit {
-    public placement: ToasterPlacement = ToasterPlacement.TopEnd;
-    @ViewChild(ToasterComponent) toaster!: ToasterComponent;
+  public placement: ToasterPlacement = ToasterPlacement.TopEnd;
+  @ViewChild(ToasterComponent) toaster!: ToasterComponent;
 
-    private ID_CONFIGURACION_VPH: number = 1;  // Id de la configuración del VPH
-    private ID_CONFIGURACION_MODO: number = 7; // Id de la configuración del MODO
+  private ID_CONFIGURACION_VPH: number = 1; // Id de la configuración del VPH
+  private ID_CONFIGURACION_MODO: number = 7; // Id de la configuración del MODO
 
-    public modoSeleccionado: string = 'Validación';
+  public modoSeleccionado: string = 'Validación';
 
-    public selectRol = [];
-    public selectEstado = [];
-    public selectProfesiones: any[] = [];
-    public selectProfesionesx2: any[] = [];
-    public idUsuario!: number;
-    public idProfesion!: number;
-    public esActualizar: boolean = false;
-    public profesionSeleccionada: string = '';
-    public formulario!: FormGroup;
-    private msmAgregado: string = 'Agregado Exitosamente!';
-    private msmActualizado: string = 'Actualizado Exitosamente!';
-    public usuarioRegistrado = false;
+  public selectRol = [];
+  public selectEstado = [];
+  public selectProfesiones: any[] = [];
+  public selectProfesionesx2: any[] = [];
+  public idUsuario!: number;
+  public idProfesion!: number;
+  public esActualizar: boolean = false;
+  public profesionSeleccionada: string = '';
+  public formulario!: FormGroup;
+  private msmAgregado: string = 'Agregado Exitosamente!';
+  private msmActualizado: string = 'Actualizado Exitosamente!';
+  public usuarioRegistrado = false;
 
-    private regexEmail =
-        /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-    public lastIdProfesion!: number;
-    public subscription!: Subscription;
+  private regexEmail =
+    /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+  public lastIdProfesion!: number;
+  public subscription!: Subscription;
 
-    public hide: boolean = true;
-    public tiposDeDocumento: any = [
-        {
-            Abreviatura: 'CC',
-            Descripcion: 'C.C',
-        },
-        {
-            Abreviatura: 'TI',
-            Descripcion: 'T.I',
-        },
-    ];
+  public hide: boolean = true;
+  public tiposDeDocumento: any = [
+    {
+      Abreviatura: 'CC',
+      Descripcion: 'C.C',
+    },
+    {
+      Abreviatura: 'TI',
+      Descripcion: 'T.I',
+    },
+  ];
 
-    constructor(
-        public authService: AuthService,
-        private enumService: EnumService,
-        private fb: FormBuilder,
-        private usuarioService: UsuarioService,
-        private personaService: PersonaService,
-        private profesionService: ProfesionService,
-        private _snackbar: SnackbarToastService,
-        private activatedRoute: ActivatedRoute,
-        private router: Router,
-        private _configuracionxUsuarioSvc: ConfiguracionXUsuarioService,
-    ) { }
+  constructor(
+    public authService: AuthService,
+    private enumService: EnumService,
+    private fb: FormBuilder,
+    private usuarioService: UsuarioService,
+    private personaService: PersonaService,
+    private profesionService: ProfesionService,
+    private _snackbar: SnackbarToastService,
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
+    private _configuracionxUsuarioSvc: ConfiguracionXUsuarioService
+  ) {}
 
-    ngOnInit(): void {
-        console.clear();
+  ngOnInit(): void {
+    console.clear();
 
-        // Obtengo el parametro que viene en la url
-        this.activatedRoute.params.subscribe(({ id }) => (this.idUsuario = id));
+    // Obtengo el parametro que viene en la url
+    this.activatedRoute.params.subscribe(({ id }) => (this.idUsuario = id));
 
-        this.crearFormulario();
-        this.getProfesiones();
+    this.crearFormulario();
+    this.getProfesiones();
 
-        // Editar Usuario
-        if (
-            (this.idUsuario && this.idUsuario !== null) ||
-            this.idUsuario !== undefined
-        ) {
-            console.log('Actualizaré Usuario');
+    // Editar Usuario
+    if (
+      (this.idUsuario && this.idUsuario !== null) ||
+      this.idUsuario !== undefined
+    ) {
+      this.llenarForm();
+      this.esActualizar = true;
 
-            this.llenarForm();
-            this.esActualizar = true;
+      // Deshabilito la modificación del los siguientes inputs
+      this.formulario.get('per_identificacion')?.disable();
+      this.formulario.get('usu_rol')?.disable();
+      this.formulario.get('usu_email')?.disable();
+      this.formulario.get('usu_usuario')?.disable();
+      this.formulario.get('usu_clave')?.disable();
+    }
 
-            // Deshabilito la modificación del los siguientes inputs
-            this.formulario.get('per_identificacion')?.disable();
-            this.formulario.get('usu_rol')?.disable();
-            this.formulario.get('usu_email')?.disable();
-            this.formulario.get('usu_usuario')?.disable();
-            this.formulario.get('usu_clave')?.disable();
+    this.getEnumRol();
+    this.getEnumEstado();
+  }
+
+  private crearFormulario() {
+    this.formulario = this.fb.group({
+      per_primer_nombre: ['', [Validators.required]],
+      per_otros_nombres: [''],
+      per_primer_apellido: ['', [Validators.required]],
+      per_segundo_apellido: [''],
+      per_tip_id: [null, Validators.required],
+      per_identificacion: [
+        null,
+        [Validators.required, Validators.maxLength(10)],
+      ],
+      usu_usuario: ['', [Validators.required, Validators.maxLength(10)]],
+      usu_clave: ['', [Validators.required, Validators.minLength(6)]],
+      usu_email: [
+        '',
+        [
+          Validators.pattern(this.regexEmail),
+          Validators.maxLength(70),
+          Validators.required,
+        ],
+      ],
+      pro_nombre: ['', [Validators.required]], // Profesión
+      usu_rol: ['', [Validators.required]],
+      usu_estado: ['', [Validators.required]],
+    });
+
+    this.formulario
+      .get('pro_nombre')
+      ?.valueChanges.subscribe(
+        (profesion) => (this.profesionSeleccionada = profesion)
+      );
+  }
+
+  private llenarForm() {
+    this.subscription = this.usuarioService.usuarioConsultar.subscribe(
+      (res) => {
+        if (res) {
+          //console.log('res Usuario: ' + JSON.stringify(res));
+
+          this.formulario.patchValue(res);
+        }
+      }
+    );
+  }
+
+  private getProfesiones() {
+    this.profesionService.getProfesiones().subscribe((res) => {
+      this.selectProfesiones = res.objetoRespuesta;
+    });
+  }
+
+  private getIdProfesion() {
+    for (const profesion of this.selectProfesiones) {
+      if (profesion.pro_nombre === this.profesionSeleccionada) {
+        this.idProfesion = profesion.pro_id;
+        break;
+      }
+    }
+  }
+
+  private getEnumRol() {
+    this.enumService.getEnum('usuario', 'usu_rol').subscribe((res) => {
+      if (res.objetoRespuesta) {
+        this.selectRol = transformEnum(res.objetoRespuesta);
+      }
+    });
+  }
+
+  private getEnumEstado() {
+    this.enumService.getEnum('usuario', 'usu_estado').subscribe((res) => {
+      if (res.objetoRespuesta) {
+        this.selectEstado = transformEnum(res.objetoRespuesta);
+      }
+    });
+  }
+
+  public save() {
+    this.savePersona();
+
+    if (this.esActualizar) {
+      this.updateEstado();
+    }
+  }
+
+  public savePersona() {
+    if (this.formulario.valid) {
+      const objEnviar: Persona = {
+        per_identificacion: this.formulario.get('per_identificacion')?.value,
+        per_primer_nombre: this.formulario.get('per_primer_nombre')?.value,
+        per_otros_nombres: this.formulario.get('per_otros_nombres')?.value,
+        per_primer_apellido: this.formulario.get('per_primer_apellido')?.value,
+        per_segundo_apellido: this.formulario.get('per_segundo_apellido')
+          ?.value,
+        per_gen_id: 1,
+        per_tip_id: this.formulario.get('per_tip_id')?.value,
+      };
+
+      if (!this.esActualizar) {
+        this.personaService.createPersona(objEnviar).subscribe((res) => {
+          res.codigoRespuesta === 0
+            ? this.saveUsuario()
+            : res.codigoRespuesta === -1
+            ? this._snackbar.status(303) // 303: Usuario Duplicado: Número de Documento
+            : this._snackbar.status(404); // 404: Error, No es posible procesar la solicitud
+        });
+      } else {
+        this.personaService
+          .updatePersona(this.idUsuario, objEnviar)
+          .subscribe((res) => {
+            if (res.codigoRespuesta === 0) {
+              this.saveUsuario();
+            }
+          });
+      }
+    } else {
+      // Completa los campos
+      this._snackbar.status(600);
+    }
+  }
+
+  public saveUsuario() {
+    this.getIdProfesion();
+
+    const objEnviar: Usuario = {
+      usu_per_identificacion: this.formulario.get('per_identificacion')?.value,
+      usu_usuario: this.formulario.get('usu_usuario')?.value,
+      usu_clave: this.formulario.get('usu_clave')?.value,
+      usu_email: this.formulario.get('usu_email')?.value,
+      usu_pro_id: this.idProfesion,
+      usu_rol: this.formulario.get('usu_rol')?.value,
+      usu_estado: this.formulario.get('usu_estado')?.value,
+    };
+
+    if (!this.esActualizar) {
+      this.usuarioService.createUsuario(objEnviar).subscribe((res) => {
+        if (res.codigoRespuesta === 0) {
+          const newUser = {
+            userName: this.formulario.get('usu_usuario')?.value,
+            id: this.formulario.get('per_identificacion')?.value,
+            role: this.formulario.get('usu_rol')?.value,
+            email: this.formulario.get('usu_email')?.value,
+            password: this.formulario.get('usu_clave')?.value,
+            passwordRepeat: this.formulario.get('usu_clave')?.value,
+          };
+
+          // Una vez creado el nuevo usuario, le asignó sus configuraciones iniciales
+          this.registrarConfiguracionModo(
+            this.formulario.get('per_identificacion')?.value,
+            this.ID_CONFIGURACION_MODO
+          );
+
+          // Registro en Firestore
+          let accion = 'crear';
+
+          this.saveUserInFirestore(newUser, accion);
         } else {
-            console.log('Crearé Usuario');
+          // 404: Error, No es posible procesar la solicitud
+          this._snackbar.status(404);
         }
+      });
+    } else {
+      //let email = this.formulario.get('usu_email')?.value;
 
-        this.getEnumRol();
-        this.getEnumEstado();
-    }
+      //Actualizo datos del usuario en Firebase
+      //this.updateUserInFirestore(email);
 
-    private crearFormulario() {
+      delete objEnviar.usu_clave;
 
-        this.formulario = this.fb.group({
-            per_primer_nombre: ['', [Validators.required]],
-            per_otros_nombres: [''],
-            per_primer_apellido: ['', [Validators.required]],
-            per_segundo_apellido: [''],
-            per_tip_id: [null, Validators.required],
-            per_identificacion: [null, [Validators.required, Validators.maxLength(10)]],
-            usu_usuario: ['', [Validators.required, Validators.maxLength(10)]],
-            usu_clave: ['', [Validators.required, Validators.minLength(6)]],
-            usu_email: ['', [Validators.pattern(this.regexEmail), Validators.maxLength(70), Validators.required]],
-            pro_nombre: ['', [Validators.required]], // Profesión
-            usu_rol: ['', [Validators.required]],
-            usu_estado: ['', [Validators.required]],
-        });
-
-        this.formulario
-            .get('pro_nombre')
-            ?.valueChanges.subscribe(
-                (profesion) => (this.profesionSeleccionada = profesion)
-            );
-    }
-
-    private llenarForm() {
-        this.subscription = this.usuarioService.usuarioConsultar.subscribe(
-            (res) => {
-                if (res) {
-                    //console.log('res Usuario: ' + JSON.stringify(res));
-
-                    this.formulario.patchValue(res);
-                }
-            }
-        );
-    }
-
-    private getProfesiones() {
-        this.profesionService.getProfesiones().subscribe((res) => {
-            this.selectProfesiones = res.objetoRespuesta;
+      // Actualizo datos del usuario en Mysql
+      this.usuarioService
+        .updateUsuario(this.idUsuario, objEnviar)
+        .subscribe((res) => {
+          if (res.codigoRespuesta === 0) {
+            this._snackbar.status(707, this.msmActualizado);
+            this.router.navigate(['/usuarios/consultar']);
+          } else {
+            // 404: Error, No es posible procesar la solicitud
+            this._snackbar.status(404);
+          }
         });
     }
+  }
 
-    private getIdProfesion() {
-        for (const profesion of this.selectProfesiones) {
-            if (profesion.pro_nombre === this.profesionSeleccionada) {
-                this.idProfesion = profesion.pro_id;
-                break;
-            }
+  private registrarConfiguracionModo(
+    identificacion: string,
+    idConfiguracion: number
+  ): void {
+    const objEnviar: ConfiguracionXUsuario = {
+      confu_usu_per_identificacion: identificacion,
+      confu_conf_id: idConfiguracion,
+      confu_estado: this.modoSeleccionado,
+    };
+
+    this._configuracionxUsuarioSvc
+      .createConfiguracionxUsuario(objEnviar)
+      .subscribe((respuesta) => {
+        if (respuesta.codigoRespuesta === 0) {
+          console.log('Configuración Agregada Exitosamente!');
         }
-    }
+      });
+  }
 
-    private getEnumRol() {
-        this.enumService.getEnum('usuario', 'usu_rol').subscribe((res) => {
-            if (res.objetoRespuesta) {
-                this.selectRol = transformEnum(res.objetoRespuesta);
-            }
-        });
-    }
+  updateUserInFirestore(email: string) {
+    this.authService.updateUserFirebase(email).then((result: any) => {
+      console.log('saveUserInFirestore', result);
+    });
+  }
 
-    private getEnumEstado() {
-        this.enumService.getEnum('usuario', 'usu_estado').subscribe((res) => {
-            if (res.objetoRespuesta) {
-                this.selectEstado = transformEnum(res.objetoRespuesta);
-            }
-        });
-    }
+  // Nuevo Usuario en Firebase
+  saveUserInFirestore(newUser: any, accion: string) {
+    this.authService
+      .SignUp(newUser.email, newUser.password, newUser)
+      .then((result: any) => {
+        //console.log('saveUserInFirestore', result);
+        if (result.user.uid) {
+          accion === 'crear'
+            ? this._snackbar.status(707, this.msmAgregado)
+            : this._snackbar.status(707, this.msmActualizado);
 
-    public save() {
-        this.savePersona();
-
-        if (this.esActualizar) {
-            this.updateEstado();
+          this.router.navigate(['/usuarios/consultar']);
         }
-    }
+      });
+  }
 
-    public savePersona() {
+  private updateEstado() {
+    const objEstado = {
+      usu_estado: this.formulario.get('usu_estado')?.value,
+    };
 
-        if (this.formulario.valid) {
+    this.usuarioService
+      .changeStateUser(this.idUsuario, objEstado)
+      .subscribe((res) => {
+        if (res.codigoRespuesta === 0) {
+          console.log('Estado Actualizado');
 
-            const objEnviar: Persona = {
-                per_identificacion: this.formulario.get('per_identificacion')?.value,
-                per_primer_nombre: this.formulario.get('per_primer_nombre')?.value,
-                per_otros_nombres: this.formulario.get('per_otros_nombres')?.value,
-                per_primer_apellido: this.formulario.get('per_primer_apellido')?.value,
-                per_segundo_apellido: this.formulario.get('per_segundo_apellido')
-                    ?.value,
-                per_gen_id: 1,
-                per_tip_id: this.formulario.get('per_tip_id')?.value,
-            };
-
-            if (!this.esActualizar) {
-                this.personaService.createPersona(objEnviar).subscribe((res) => {
-                    res.codigoRespuesta === 0
-                        ? this.saveUsuario()
-                        : res.codigoRespuesta === -1
-                            ? this._snackbar.status(303) // 303: Usuario Duplicado: Número de Documento
-                            : this._snackbar.status(404); // 404: Error, No es posible procesar la solicitud
-                });
-            } else {
-                this.personaService
-                    .updatePersona(this.idUsuario, objEnviar)
-                    .subscribe((res) => {
-                        if (res.codigoRespuesta === 0) {
-                            this.saveUsuario();
-                        }
-                        //console.log(res);
-                    });
-            }
-        } else {
-            // Completa los campos
-            this._snackbar.status(600);
-        }
-    }
-
-    public saveUsuario() {
-        this.getIdProfesion();
-
-        const objEnviar: Usuario = {
-            usu_per_identificacion: this.formulario.get('per_identificacion')?.value,
-            usu_usuario: this.formulario.get('usu_usuario')?.value,
-            usu_clave: this.formulario.get('usu_clave')?.value,
-            usu_email: this.formulario.get('usu_email')?.value,
-            usu_pro_id: this.idProfesion,
-            usu_rol: this.formulario.get('usu_rol')?.value,
-            usu_estado: this.formulario.get('usu_estado')?.value,
-        };
-
-        if (!this.esActualizar) {
-            this.usuarioService.createUsuario(objEnviar).subscribe((res) => {
-
-                if (res.codigoRespuesta === 0) {
-
-                    const newUser = {
-                        userName: this.formulario.get('usu_usuario')?.value,
-                        id: this.formulario.get('per_identificacion')?.value,
-                        role: this.formulario.get('usu_rol')?.value,
-                        email: this.formulario.get('usu_email')?.value,
-                        password: this.formulario.get('usu_clave')?.value,
-                        passwordRepeat: this.formulario.get('usu_clave')?.value,
-                    };
-
-                    // Una vez creado el nuevo usuario, le asignó sus configuraciones iniciales
-                    this.registrarConfiguracionModo(this.formulario.get('per_identificacion')?.value, this.ID_CONFIGURACION_MODO);
-
-                    // Registro en Firestore
-                    let accion = 'crear';
-
-                    this.saveUserInFirestore(newUser, accion);
-                } else {
-                    // 404: Error, No es posible procesar la solicitud
-                    this._snackbar.status(404);
-                }
-
-                //console.log(res);
-            });
-        } else {
-            //let email = this.formulario.get('usu_email')?.value;
-
-            //Actualizo datos del usuario en Firebase
-            //this.updateUserInFirestore(email);
-
-            delete objEnviar.usu_clave;
-
-            // Actualizo datos del usuario en Mysql
-            this.usuarioService
-                .updateUsuario(this.idUsuario, objEnviar)
-                .subscribe((res) => {
-                    if (res.codigoRespuesta === 0) {
-                        this._snackbar.status(707, this.msmActualizado);
-                        this.router.navigate(['/usuarios/consultar']);
-                    } else {
-                        // 404: Error, No es posible procesar la solicitud
-                        this._snackbar.status(404);
-                    }
-
-                    //console.log(res);
-                });
-        }
-    }
-
-    private registrarConfiguracionModo(identificacion: string, idConfiguracion: number): void {
-
-        const objEnviar: ConfiguracionXUsuario = {
-            confu_usu_per_identificacion: identificacion,
-            confu_conf_id: idConfiguracion,
-            confu_estado: this.modoSeleccionado
-        };
-
-        this._configuracionxUsuarioSvc.createConfiguracionxUsuario(objEnviar).subscribe((respuesta) => {
-
-            if (respuesta.codigoRespuesta === 0) {
-
-                console.log('Configuración Agregada Exitosamente!');
-            }
-        })
-    }
-
-    updateUserInFirestore(email: string) {
-        this.authService.updateUserFirebase(email).then((result: any) => {
-            console.log('saveUserInFirestore', result);
-        });
-    }
-
-    // Nuevo Usuario en Firebase
-    saveUserInFirestore(newUser: any, accion: string) {
-        this.authService
-            .SignUp(newUser.email, newUser.password, newUser)
-            .then((result: any) => {
-                //console.log('saveUserInFirestore', result);
-                if (result.user.uid) {
-                    accion === 'crear'
-                        ? this._snackbar.status(707, this.msmAgregado)
-                        : this._snackbar.status(707, this.msmActualizado);
-
-                    this.router.navigate(['/usuarios/consultar']);
-                }
-            });
-    }
-
-    private updateEstado() {
-        const objEstado = {
-            usu_estado: this.formulario.get('usu_estado')?.value,
-        };
-
-        this.usuarioService
-            .changeStateUser(this.idUsuario, objEstado)
-            .subscribe((res) => {
-                if (res.codigoRespuesta === 0) {
-                    console.log('Estado Actualizado');
-
-                    /* setTimeout(() => {
+          /* setTimeout(() => {
                               this.router.navigate(['/usuarios/consultar']);
                           }, 2000); */
-                } else {
-                    //this.snackbar.addToastSucces();;
-                    console.log('Estado No Actualizado');
-                }
-            });
-    }
-
-    ngOnDestroy() {
-        this.usuarioService.usuarioConsultar.next({});
-
-        if (this.subscription) {
-            this.subscription.unsubscribe();
+        } else {
+          //this.snackbar.addToastSucces();;
+          console.log('Estado No Actualizado');
         }
-    }
+      });
+  }
 
+  ngOnDestroy() {
+    this.usuarioService.usuarioConsultar.next({});
+
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
 }

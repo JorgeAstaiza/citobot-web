@@ -2,8 +2,6 @@ import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '
 
 import { Subject } from 'rxjs';
 
-
-
 @Component({
   selector: 'app-webcam-snapshot',
   templateUrl: './webcam-snapshot.component.html',
@@ -53,7 +51,6 @@ export class WebcamSnapshotComponent implements OnInit {
   capture() {
     this.drawImageToCanvas(this.video.nativeElement);
     this.captures.push(this.canvas.nativeElement.toDataURL('image/png'));
-    console.log(this.capture);
     this.isCaptured = true;
   }
 
@@ -62,12 +59,9 @@ export class WebcamSnapshotComponent implements OnInit {
   }
 
   setPhoto(idx: number) {
-    console.log(idx);
-
     this.isCaptured = true;
     var image = new Image();
     image.src = this.captures[idx];
-    console.log(image.src);
     this.imagen.emit(image.src);
     this.drawImageToCanvas(image);
   }
