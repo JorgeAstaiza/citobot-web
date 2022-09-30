@@ -70,13 +70,13 @@
           [width]="550"
           [trigger]="triggerObservable"
           (imageCapture)="handleImage($event)"
-          *ngIf="showWebcam"
+          *ngIf="showWebcam && !tamizajeApartirDeOtro"
           [allowCameraSwitch]="allowCameraSwitch"
           [switchCamera]="nextWebcamObservable"
           [imageQuality]="1"
           (cameraSwitched)="cameraWasSwitched($event)"
         ></webcam>
-        <div class="ctn-btns">
+        <div class="ctn-btns" *ngIf="!tamizajeApartirDeOtro">
           <button
             [disabled]="btnCapture"
             class="btn btn-primary boton-capturar"
@@ -91,10 +91,27 @@
           >
             Cambiar de camara
           </button>
+          <div class="mb-4">
+            <label cLabel for="exampleFormControlInput1">Cargar Foto</label>
+            <input
+              [disabled]="btnCapture"
+              type="file"
+              multiple="true"
+              (change)="capturarImagen($event, '1')"
+              cFormControl
+            />
+          </div>
         </div>
         <br />
-
-        <ul class="list-unstyled">
+        <div
+          class="ctn-spinner"
+          style="width: 100%; text-align: center"
+          *ngIf="cargandoImagenes"
+        >
+          <c-spinner color="success"></c-spinner>
+          <p style="margin: 0">Cargando Imagenes...</p>
+        </div>
+        <ul class="list-unstyled" *ngIf="!cargandoImagenes">
           <li>
             <mat-radio-group class="mt-2">
               <c-row class="mt-1">
@@ -146,10 +163,15 @@
         style="margin-right: 5px"
         mat-raised-button
         color="primary"
-        [disabled]="loading"
+        [disabled]="cargandoImagenes"
+        *ngIf="!loading"
         (click)="save()"
       >
-        <mat-icon>save</mat-icon>{{ loading ? "Guardando..." : "Guardar" }}
+        <mat-icon>save</mat-icon>{{ "Guardar" }}
+      </button>
+      <button *ngIf="loading" cButton class="m-1" disabled>
+        <c-spinner aria-hidden="true" size="sm"></c-spinner>
+        Guardando...
       </button>
     </form>
   </mat-card>

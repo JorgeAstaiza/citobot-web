@@ -9,6 +9,7 @@ import {
 	FormModule,
 	GridModule,
 	ModalModule,
+	SpinnerModule,
 	TableModule,
 	ToastModule
 } from '@coreui/angular';
@@ -38,6 +39,7 @@ import { WebcamSnapshotComponent } from './webcam-snapshot/webcam-snapshot.compo
     ModalModule,
     WebcamModule,
     FormsModule,
+    SpinnerModule,
   ],
 })
 export class TamizajeModule {}

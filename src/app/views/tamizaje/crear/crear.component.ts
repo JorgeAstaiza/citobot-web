@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -22,11 +22,10 @@ import { UsuarioService } from '../../../shared/services/usuario.service';
   templateUrl: './crear.component.html',
   styleUrls: ['./crear.component.scss'],
 })
-export class CrearComponent implements OnInit {
+export class CrearComponent implements OnInit, OnDestroy {
   public formulario!: FormGroup;
   public estaHabilitado: boolean = false;
   public todayDate = new Date();
-  public archivos: any[] = [];
   public loading: boolean = false;
   public isChecked: boolean = true;
   public modoPruebas = false;
@@ -66,7 +65,8 @@ export class CrearComponent implements OnInit {
   private base64Img!: string;
   public btnCapture = false;
   private LIMITE_IMAGENES = 3;
-
+  public cargandoImagenes = false;
+  public tamizajeApartirDeOtro = false;
   checkImagen!: FormControl;
 
   constructor(
@@ -92,7 +92,11 @@ export class CrearComponent implements OnInit {
         this.tam_vph = params.vphTamizaje;
         this.tam_contraste = params.contrasteTamizaje;
         this.tam_id = params.idTamizaje;
-
+        if (params?.idTamizaje) {
+          this.tamizajeApartirDeOtro = true;
+        } else {
+          this.tamizajeApartirDeOtro = false;
+        }
         this.obtenerImagenFtp(params.idTamizaje);
       }
     });
@@ -111,7 +115,9 @@ export class CrearComponent implements OnInit {
     this.llenarForm();
     this.changeModo();
   }
-
+  ngOnDestroy(): void {
+    this.webcamImage = [];
+  }
   private contruir_formulario(): void {
     this.formulario = this._fb.group({
       vph: [true],
@@ -150,14 +156,27 @@ export class CrearComponent implements OnInit {
   }
 
   private obtenerImagenFtp(idTamizaje: number) {
+    if (!idTamizaje) {
+      return;
+    }
     try {
       this.imagenSvc.getImagenByIdTamizaje(idTamizaje).subscribe((imagen) => {
-        if (imagen.objetoRespuesta[0].ima_ruta !== undefined) {
-          this.urlImagen = imagen.objetoRespuesta[0].ima_ruta;
-          this.obtenerImgFtp(this.urlImagen);
+        this.cargandoImagenes = true;
+
+        if (imagen.objetoRespuesta.length > 1) {
+          this.modoPruebas = true;
+          this.LIMITE_IMAGENES = 5;
+          for (const iterator of imagen.objetoRespuesta) {
+            this.urlImagen = iterator.ima_ruta;
+            this.obtenerImgFtp(this.urlImagen);
+          }
         } else {
-          this.urlImagen =
-            'https://images.unsplash.com/photo-1583106853354-9d88c18d46cf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1064&q=80';
+          if (imagen.objetoRespuesta[0].ima_ruta !== undefined) {
+            this.modoPruebas = false;
+            this.LIMITE_IMAGENES = 3;
+            this.urlImagen = imagen.objetoRespuesta[0].ima_ruta;
+            this.obtenerImgFtp(this.urlImagen);
+          }
         }
       });
     } catch (error) {
@@ -181,8 +200,23 @@ export class CrearComponent implements OnInit {
       () => {
         const obj = {
           imageAsDataUrl: reader.result,
+          imageAsBase64: reader.result,
         };
         this.webcamImage.push(obj);
+        if (this.LIMITE_IMAGENES === 5) {
+          if (this.webcamImage.length === this.LIMITE_IMAGENES) {
+            this.cargandoImagenes = false;
+            this.btnCapture = true;
+          }
+        } else {
+          if (this.webcamImage.length === 1) {
+            this.cargandoImagenes = false;
+            this.btnCapture = true;
+            this.setPhoto(0);
+            this.checkImagen.setValue(0);
+            this.checkImagen.markAsTouched();
+          }
+        }
       },
       false
     );
@@ -290,7 +324,14 @@ export class CrearComponent implements OnInit {
   }
 
   setPhoto(idx: number) {
-    this.base64Img = this.webcamImage[idx].imageAsBase64;
+    if (this.webcamImage[idx].imageAsBase64 === undefined) {
+      this.base64Img = this.webcamImage[idx].imageAsDataUrl.replace(
+        'data:image/jpeg;base64,',
+        ''
+      );
+    } else {
+      this.base64Img = this.webcamImage[idx].imageAsBase64;
+    }
   }
 
   public save(): void {
@@ -302,8 +343,8 @@ export class CrearComponent implements OnInit {
       );
       return;
     }
-
     if (this.formulario.valid && this.checkImagen.valid) {
+      this.loading = true;
       this.formulario.get('vph')?.value === true
         ? (this.tam_vph = 'Positivo')
         : this.formulario.get('vph')?.value === false
@@ -331,78 +372,153 @@ export class CrearComponent implements OnInit {
       try {
         if (res.codigoRespuesta === 0) {
           // Obtener el id del último tamizaje agregado: útil para guardar la imagen
-          this.obtenerUltimoIdTamizajeXIdPaciente();
+          const idTamizaje = res.objetoRespuesta.insertId;
+          this.guardarImagenViaFTP(idTamizaje);
         } else {
           // 404: Error, No es posible procesar la solicitud
           this._snackbar.status(404);
         }
       } catch (error) {
         console.log('Error: ', error);
+        this.loading = false;
       }
     });
   }
 
-  public obtenerUltimoIdTamizajeXIdPaciente() {
-    this.tamizajeSvc
-      .getUltimoIdTamizajeXIdPaciente(this.paciente_identificacion)
-      .subscribe((res) => {
-        this.idUltimoTamizaje = Object.values(res.objetoRespuesta[0])[0];
-        // Guardo la imagen
-        this.saveImagenConRuta(this.idUltimoTamizaje);
-      });
-  }
-
-  public saveImagenConRuta(idUltimoTamizaje: number): void {
+  public guardarImagenViaFTP(idUltimoTamizaje: number): void {
     if (this.modoPruebas) {
-      this.webcamImage.forEach((element: any, index: number) => {
+      for (const key in this.webcamImage) {
+        let fail = false;
         const objImagen = {
-          base64: element.imageAsBase64,
-          nombre: `${this.paciente_identificacion}_${this.idUltimoTamizaje}_${index}.jpeg`,
+          base64:
+            this.webcamImage[key].imageAsBase64 ||
+            this.webcamImage[key].imageAsDataUrl.replace(
+              'data:image/jpeg;base64,',
+              ''
+            ),
+          nombre: `${this.paciente_identificacion}_${idUltimoTamizaje}_${
+            parseInt(key) + 1
+          }.jpeg`,
         };
-        this.imagenSvc.guardarImagenFTP(objImagen).subscribe();
-        const newImagen: Imagen = {
-          ima_tam_id: idUltimoTamizaje,
-          ima_tipo: 'jpeg', //TODO: Colocar esto dinámicamente y los ENUM: Mayúsculas
-          ima_ruta: `${this.paciente_identificacion}_${this.idUltimoTamizaje}_${index}.jpeg`,
-        };
-        this.imagenSvc.createImagenConRuta(newImagen).subscribe((res) => {
+        if (fail) {
+          break;
+        }
+        this.imagenSvc.guardarImagenFTP(objImagen).subscribe((res) => {
           if (res.codigoRespuesta === 0) {
-            if (index + 1 === this.webcamImage.length) {
-              this._snackbar.status(707, this.msmAgregado);
-              this.router.navigateByUrl('tamizajes/consultar');
-            }
+            this.guardarRutaImagen(idUltimoTamizaje, parseInt(key) + 1);
           } else {
-            // 404: Error, No es posible procesar la solicitud
-            this._snackbar.status(404);
+            this.eliminarTamizajeById(idUltimoTamizaje);
+            fail = true;
+            this.loading = false;
           }
         });
-      });
+      }
     } else {
       const objImagen = {
         base64: this.base64Img,
-        nombre: `${this.paciente_identificacion}_${this.idUltimoTamizaje}.jpeg`,
+        nombre: `${this.paciente_identificacion}_${idUltimoTamizaje}.jpeg`,
       };
 
-      this.imagenSvc.guardarImagenFTP(objImagen).subscribe();
-      const newImagen: Imagen = {
-        ima_tam_id: idUltimoTamizaje,
-        ima_tipo: 'jpeg', //TODO: Colocar esto dinámicamente y los ENUM: Mayúsculas
-        ima_ruta: `${this.paciente_identificacion}_${this.idUltimoTamizaje}.jpeg`,
-      };
-
-      this.imagenSvc.createImagenConRuta(newImagen).subscribe((res) => {
+      this.imagenSvc.guardarImagenFTP(objImagen).subscribe((res) => {
         if (res.codigoRespuesta === 0) {
-          this._snackbar.status(707, this.msmAgregado);
-          this.router.navigateByUrl('tamizajes/consultar');
+          this.guardarRutaImagen(idUltimoTamizaje);
         } else {
-          // 404: Error, No es posible procesar la solicitud
-          this._snackbar.status(404);
+          this.eliminarTamizajeById(idUltimoTamizaje);
         }
       });
     }
   }
 
+  private guardarRutaImagen(idUltimoTamizaje: number, key?: number) {
+    const lengthImages = this.webcamImage.length;
+    let newImagen: Imagen;
+    if (key) {
+      newImagen = {
+        ima_tam_id: idUltimoTamizaje,
+        ima_tipo: 'jpeg', //TODO: Colocar esto dinámicamente y los ENUM: Mayúsculas
+        ima_ruta: `${this.paciente_identificacion}_${idUltimoTamizaje}_${key}.jpeg`,
+      };
+    } else {
+      newImagen = {
+        ima_tam_id: idUltimoTamizaje,
+        ima_tipo: 'jpeg', //TODO: Colocar esto dinámicamente y los ENUM: Mayúsculas
+        ima_ruta: `${this.paciente_identificacion}_${idUltimoTamizaje}.jpeg`,
+      };
+    }
+    this.imagenSvc.createImagenConRuta(newImagen).subscribe((res) => {
+      if (res.codigoRespuesta === 0) {
+        if (key) {
+          if (key + 1 === lengthImages) {
+            this.loading = false;
+            this._snackbar.status(707, this.msmAgregado);
+            this.router.navigateByUrl('tamizajes/consultar');
+          }
+        } else {
+          this.loading = false;
+          this._snackbar.status(707, this.msmAgregado);
+          this.router.navigateByUrl('tamizajes/consultar');
+        }
+      } else {
+        // 404: Error, No es posible procesar la solicitud
+        this._snackbar.status(404);
+        this.loading = false;
+      }
+    });
+  }
+
+  private eliminarTamizajeById(idTamizaje: number) {
+    this.tamizajeSvc.eliminarTamizajeById(idTamizaje).subscribe();
+  }
+
   public verInstrucciones(): void {
     this.dialog.open(InstruccionesTamizajeComponent);
   }
+
+  public capturarImagen(event: any, NumeroImagen: string): any {
+    if (event.target.files.length > 1) {
+      for (const iterator of event.target.files) {
+        const archivoCapturado = iterator;
+        this.extraerBase64(archivoCapturado).then((imagen: any) => {
+          const obj = {
+            imageAsDataUrl: imagen.base,
+          };
+          this.webcamImage.push(obj);
+          if (this.webcamImage.length === this.LIMITE_IMAGENES) {
+            this.btnCapture = true;
+          }
+        });
+      }
+    } else {
+      const archivoCapturado = event.target.files[0];
+      this.extraerBase64(archivoCapturado).then((imagen: any) => {
+        const obj = {
+          imageAsDataUrl: imagen.base,
+        };
+        this.webcamImage.push(obj);
+        if (this.webcamImage.length === this.LIMITE_IMAGENES) {
+          this.btnCapture = true;
+        }
+      });
+    }
+  }
+
+  private extraerBase64 = async ($event: any) =>
+    new Promise((resolve, reject) => {
+      try {
+        const reader = new FileReader();
+        reader.readAsDataURL($event);
+        reader.onload = () => {
+          resolve({
+            base: reader.result,
+          });
+        };
+        reader.onerror = (error) => {
+          resolve({
+            base: null,
+          });
+        };
+      } catch (e) {
+        return null;
+      }
+    });
 }

@@ -23,7 +23,9 @@ export class ImagenService {
   getImagenByIdTamizaje(id: number): Observable<any> {
     return this.http.get<Imagen>(
       `${this.enviromentUrl}/imagenes/obtener?id=${id}`,
-      { headers: this.headers }
+      {
+        headers: this.headers,
+      }
     );
   }
 
@@ -52,7 +54,9 @@ export class ImagenService {
     return this.http.post<Imagen>(
       `${this.enviromentUrl}/imagenes/crear`,
       form,
-      { headers: this.headers }
+      {
+        headers: this.headers,
+      }
     );
   }
 
@@ -66,7 +70,9 @@ export class ImagenService {
     return this.http.post<Imagen>(
       `${this.enviromentUrl}/imagenes/crear`,
       form,
-      { headers: this.headers }
+      {
+        headers: this.headers,
+      }
     );
   }
 
@@ -81,7 +87,9 @@ export class ImagenService {
   deleteImagen(id: number): Observable<any> {
     return this.http.delete<any>(
       `${this.enviromentUrl}/imagenes/eliminar/${id}`,
-      { headers: this.headers }
+      {
+        headers: this.headers,
+      }
     );
   }
 }

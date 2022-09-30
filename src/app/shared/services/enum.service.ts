@@ -10,6 +10,8 @@ import { url } from '../../../environments/environment';
 })
 export class EnumService {
   enviromentUrl = url;
+  test = 'http://localhost:8080/api';
+
   constructor(private http: HttpClient) {}
 
   public getEnum(tabla: string, columna: string): Observable<any> {

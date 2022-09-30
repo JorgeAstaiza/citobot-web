@@ -70,9 +70,6 @@ export class DetalleTamizajeComponent {
             if (imagen.objetoRespuesta[0].ima_ruta !== undefined) {
               this.urlImagen = imagen.objetoRespuesta[0].ima_ruta;
               this.obtenerImgFtp(this.urlImagen);
-            } else {
-              this.urlImagen =
-                'https://images.unsplash.com/photo-1583106853354-9d88c18d46cf?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1064&q=80';
             }
           }
         });
