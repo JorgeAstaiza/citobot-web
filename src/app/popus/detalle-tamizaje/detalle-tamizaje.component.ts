@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { UsuarioService } from 'src/app/shared/services/usuario.service';
@@ -9,12 +9,12 @@ import { ImagenService } from '../../shared/services/imagen.service';
   templateUrl: './detalle-tamizaje.component.html',
   styleUrls: ['./detalle-tamizaje.component.scss'],
 })
-export class DetalleTamizajeComponent {
+export class DetalleTamizajeComponent implements OnInit {
   public infoPaciente: any = [];
   public nombreCompleto: string = '';
   public urlImagen: string = '';
   public imgFromFtp: any;
-  public estadoConfiguracionVph: string | null = '';
+  public estadoConfiguracionVph: boolean = false;
   public usuario: any;
   public multipleImagenes = false;
   public imag1: any;
@@ -34,10 +34,12 @@ export class DetalleTamizajeComponent {
       this.usuario = usuario;
     });
 
-    this.verificarConfiguracionVphEnLocalStorage();
-
     this.desplegarImagen();
     this.totalImagenes();
+  }
+
+  ngOnInit(): void {
+    this.verificarConfiguracionVphEnLocalStorage(this.data);
   }
 
   private totalImagenes() {
@@ -50,11 +52,12 @@ export class DetalleTamizajeComponent {
     });
   }
 
-  private verificarConfiguracionVphEnLocalStorage() {
-    const configuracionVph = JSON.parse(
-      localStorage.getItem('configuracionVph')!
-    );
-    this.estadoConfiguracionVph = configuracionVph.estado;
+  private verificarConfiguracionVphEnLocalStorage(data: any) {
+    if (data.Tamizaje.tam_vph_no_info === 0) {
+      this.estadoConfiguracionVph = true;
+    } else {
+      this.estadoConfiguracionVph = false;
+    }
   }
 
   private desplegarImagen() {

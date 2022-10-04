@@ -82,7 +82,6 @@ export class CrearComponent implements OnInit, OnDestroy {
     private enumService: EnumService
   ) {
     this.obtenerIdUsuario();
-    this.verificarConfiguracionesEnLocalStorage();
     // Verificar la configuracón que se estableció del Vph en el módulo de configuraciones
     // Parametros de la url
     this.activatedRoute.params.subscribe((params: any) => {
@@ -100,6 +99,7 @@ export class CrearComponent implements OnInit, OnDestroy {
         this.obtenerImagenFtp(params.idTamizaje);
       }
     });
+    this.verificarConfiguracionesEnLocalStorage();
   }
 
   ngOnInit(): void {
@@ -270,10 +270,14 @@ export class CrearComponent implements OnInit, OnDestroy {
   private verificarConfiguracionesEnLocalStorage() {
     // Configuración del Vph
     //--------------------------------------------
-    const configuracionVph = JSON.parse(
-      localStorage.getItem('configuracionVph')!
-    );
-    this.estadoConfiguracionVph = configuracionVph.estado;
+    if (!this.tamizajeApartirDeOtro) {
+      const configuracionVph = JSON.parse(
+        localStorage.getItem('configuracionVph')!
+      );
+      this.estadoConfiguracionVph = configuracionVph.estado;
+    } else {
+      this.estadoConfiguracionVph = 'true';
+    }
 
     // Configuración del Modo
     //--------------------------------------------
@@ -357,7 +361,8 @@ export class CrearComponent implements OnInit, OnDestroy {
         tam_fecha: this.todayDate,
         tam_contraste: this.formulario.get('contraste')?.value,
         tam_vph: this.tam_vph,
-        tam_niv_id: 1, // TODO: Cambiar este nivel de riesgo cuando ya sepamos cual será el id a registrar, de momento será el más bajo
+        tam_niv_id: 1, // TODO: Cambiar este nivel de riesgo cuando ya sepamos cual será el id a registrar, de momento será el más bajo,
+        tam_vph_no_info: this.estadoConfiguracionVph === 'true' ? 0 : 1,
       };
 
       this.saveTamizaje(newTamizaje);
