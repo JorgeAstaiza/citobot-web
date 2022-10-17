@@ -30,13 +30,17 @@ export class ImagenService {
   }
 
   getImagenByFtp(nombre: any): Observable<Blob> {
-    return this.http.post(`${this.test}/imagenes/ftpdescargar`, nombre, {
-      responseType: 'blob',
-      headers: new HttpHeaders().set(
-        'Authorization',
-        localStorage.getItem('token') || ''
-      ),
-    });
+    return this.http.post(
+      `${this.enviromentUrl}/imagenes/ftpdescargar`,
+      nombre,
+      {
+        responseType: 'blob',
+        headers: new HttpHeaders().set(
+          'Authorization',
+          localStorage.getItem('token') || ''
+        ),
+      }
+    );
   }
 
   getTotalImagenes(idTamizaje: number): Observable<any> {
@@ -47,13 +51,17 @@ export class ImagenService {
   }
 
   createImagen(form: any): Observable<any> {
-    return this.http.post<Imagen>(`${this.test}/imagenes/crear`, form, {
-      headers: this.headers,
-    });
+    return this.http.post<Imagen>(
+      `${this.enviromentUrl}/imagenes/crear`,
+      form,
+      {
+        headers: this.headers,
+      }
+    );
   }
 
   guardarImagenFTP(base64: any): Observable<any> {
-    return this.http.post<any>(`${this.test}/imagenes/ftp`, base64, {
+    return this.http.post<any>(`${this.enviromentUrl}/imagenes/ftp`, base64, {
       headers: this.headers,
     });
   }
