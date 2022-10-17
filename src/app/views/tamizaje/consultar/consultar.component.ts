@@ -27,7 +27,13 @@ export class ConsultarComponent implements OnInit, OnDestroy {
     end: new FormControl(),
   });
 
-  displayedColumns: string[] = ['Identificacion', 'Fecha', 'Nivel', 'Acciones'];
+  displayedColumns: string[] = [
+    'Identificacion',
+    'Fecha',
+    'Hora',
+    'Nivel',
+    'Acciones',
+  ];
   dataSource = new MatTableDataSource();
 
   @ViewChild(MatSort, { static: true }) sort!: MatSort;
@@ -114,6 +120,7 @@ export class ConsultarComponent implements OnInit, OnDestroy {
 
       // Ordenaré por fecha los tamizajes
       this.dataTamizaje.sort(sortFunctionTamizajes);
+      console.log(this.dataTamizaje);
 
       this.dataSource = new MatTableDataSource(this.dataTamizaje);
 

@@ -328,6 +328,8 @@ export class CrearComponent implements OnInit, OnDestroy {
   }
 
   setPhoto(idx: number) {
+    console.log(this.todayDate);
+
     if (this.webcamImage[idx].imageAsBase64 === undefined) {
       this.base64Img = this.webcamImage[idx].imageAsDataUrl.replace(
         'data:image/jpeg;base64,',
