@@ -360,7 +360,7 @@ export class CrearComponent implements OnInit, OnDestroy {
         tam_vph_no_info: this.estadoConfiguracionVph === 'true' ? 1 : 0,
       };
 
-      // this.saveTamizaje(newTamizaje);
+      this.saveTamizaje(newTamizaje);
     } else {
       // Completa los campos
       this._snackbar.status(600);
