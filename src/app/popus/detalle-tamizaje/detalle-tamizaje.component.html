@@ -71,9 +71,7 @@
         {{ data.Tamizaje.tam_fecha | date: "yyyy-MM-dd":"UTC" }}
       </li>
       <li><strong>Contraste:</strong> {{ data.Tamizaje.tam_contraste }}</li>
-      <li *ngIf="estadoConfiguracionVph === true">
-        <strong>Vph: </strong> {{ data.Tamizaje.tam_vph }}
-      </li>
+      <li><strong>Vph: </strong> {{ data.Tamizaje.tam_vph }}</li>
     </ul>
   </mat-card-content>
   <mat-card-actions style="text-align: center">

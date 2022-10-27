@@ -68,7 +68,7 @@ export class CrearComponent implements OnInit, OnDestroy {
   public cargandoImagenes = false;
   public tamizajeApartirDeOtro = false;
   checkImagen!: FormControl;
-
+  public opcionesVph = ['Sin VPH', 'Positivo', 'Negativo'];
   constructor(
     private _fb: FormBuilder,
     private tamizajeSvc: TamizajeService,
@@ -99,7 +99,6 @@ export class CrearComponent implements OnInit, OnDestroy {
         this.obtenerImagenFtp(params.idTamizaje);
       }
     });
-    this.verificarConfiguracionesEnLocalStorage();
   }
 
   ngOnInit(): void {
@@ -114,19 +113,16 @@ export class CrearComponent implements OnInit, OnDestroy {
     this.obtenerNombreDelPaciente();
     this.llenarForm();
     this.changeModo();
+    this.verificarConfiguracionesEnLocalStorage();
   }
   ngOnDestroy(): void {
     this.webcamImage = [];
   }
   private contruir_formulario(): void {
     this.formulario = this._fb.group({
-      vph: [true],
+      vph: [null],
       contraste: ['', [Validators.required]],
       foto: [null, [Validators.required]],
-    });
-
-    this.formulario.get('vph')?.valueChanges.subscribe((value) => {
-      this.isChecked = value;
     });
   }
 
@@ -244,14 +240,10 @@ export class CrearComponent implements OnInit, OnDestroy {
   }
 
   private llenarForm(): void {
-    this.tam_vph !== 'Positivo'
-      ? (this.tam_vph_booleano = false)
-      : (this.tam_vph_booleano = true);
-
     this.obtenerImagenPorIdTamizaje();
 
     this.formulario.patchValue({ contraste: this.tam_contraste });
-    this.formulario.patchValue({ vph: this.tam_vph_booleano });
+    this.formulario.patchValue({ vph: this.tam_vph });
     this.formulario.patchValue({ foto: 1 });
   }
 
@@ -275,8 +267,14 @@ export class CrearComponent implements OnInit, OnDestroy {
         localStorage.getItem('configuracionVph')!
       );
       this.estadoConfiguracionVph = configuracionVph.estado;
+      if (this.estadoConfiguracionVph === 'true') {
+        this.formulario.get('vph')?.setValidators([Validators.required]);
+        this.formulario.updateValueAndValidity();
+      }
     } else {
       this.estadoConfiguracionVph = 'true';
+      this.formulario.get('vph')?.setValidators([Validators.required]);
+      this.formulario.updateValueAndValidity();
     }
 
     // Configuración del Modo
@@ -328,8 +326,6 @@ export class CrearComponent implements OnInit, OnDestroy {
   }
 
   setPhoto(idx: number) {
-    console.log(this.todayDate);
-
     if (this.webcamImage[idx].imageAsBase64 === undefined) {
       this.base64Img = this.webcamImage[idx].imageAsDataUrl.replace(
         'data:image/jpeg;base64,',
@@ -349,25 +345,22 @@ export class CrearComponent implements OnInit, OnDestroy {
       );
       return;
     }
-    if (this.formulario.valid && this.checkImagen.valid) {
+    if (this.formulario.valid && this.checkImagen.value) {
       this.loading = true;
-      this.formulario.get('vph')?.value === true
-        ? (this.tam_vph = 'Positivo')
-        : this.formulario.get('vph')?.value === false
-        ? (this.tam_vph = 'Negativo')
-        : (this.tam_vph = 'Sin VPH');
-
+      if (this.estadoConfiguracionVph === 'false') {
+        this.formulario.get('vph')?.setValue('Sin VPH');
+      }
       const newTamizaje: Tamizaje = {
         tam_pac_per_identificacion: this.paciente_identificacion,
         tam_usu_per_identificacion: this.usuario_identificacion,
         tam_fecha: this.todayDate,
         tam_contraste: this.formulario.get('contraste')?.value,
-        tam_vph: this.tam_vph,
+        tam_vph: this.formulario.get('vph')?.value,
         tam_niv_id: 1, // TODO: Cambiar este nivel de riesgo cuando ya sepamos cual será el id a registrar, de momento será el más bajo,
-        tam_vph_no_info: this.estadoConfiguracionVph === 'true' ? 0 : 1,
+        tam_vph_no_info: this.estadoConfiguracionVph === 'true' ? 1 : 0,
       };
 
-      this.saveTamizaje(newTamizaje);
+      // this.saveTamizaje(newTamizaje);
     } else {
       // Completa los campos
       this._snackbar.status(600);

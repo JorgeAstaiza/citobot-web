@@ -17,7 +17,7 @@
                 <strong> Paciente: </strong>
                 {{ paciente | titlecase }}
               </c-col>
-              <c-col style="text-align: right">
+              <!-- <c-col style="text-align: right">
                 <button
                   (click)="verInstrucciones()"
                   type="button"
@@ -27,15 +27,36 @@
                   <mat-icon style="color: #00838f">help</mat-icon> ¿Cómo
                   Tamizar?
                 </button>
-              </c-col>
+              </c-col> -->
             </c-row>
           </c-card-header>
         </c-card>
       </c-col>
-
       <mat-card>
-        <c-row class="mt-1">
-          <c-col>
+        <div class="col-md-12">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>Instrucciones</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <mat-divider></mat-divider>
+              <br />
+
+              <!-- Instrucciones para tamizar -->
+              <ol>
+                <li>Selecciona un Contraste</li>
+                <li>Toma mínimo 1 o máximo 3 fotos</li>
+                <li>Selecciona la mejor foto</li>
+                <li>Selecciona VPH + o VPH - si está habilitado</li>
+                <li>Click en Guardar</li>
+              </ol>
+
+              <mat-divider></mat-divider>
+            </mat-card-content>
+          </mat-card>
+        </div>
+        <c-row class="mt-5">
+          <c-col xs="4">
             <div class="mb-3">
               <!-- Contraste -->
               <mat-form-field appearance="legacy">
@@ -52,16 +73,6 @@
                   >
                 </mat-select>
               </mat-form-field>
-            </div>
-          </c-col>
-
-          <c-col>
-            <div *ngIf="estadoConfiguracionVph === 'true'" class="mt-3">
-              <!-- Vph -->
-              VPH
-              <mat-slide-toggle formControlName="vph">
-                {{ isChecked ? "( + ) | Positivo" : "( - ) | Negativo" }}
-              </mat-slide-toggle>
             </div>
           </c-col>
         </c-row>
@@ -155,6 +166,27 @@
             </mat-radio-group>
           </li>
         </ul>
+        <c-row>
+          <c-col>
+            <div *ngIf="estadoConfiguracionVph === 'true'">
+              Seleccionar VPH
+
+              <mat-radio-group
+                aria-labelledby="example-radio-group-label"
+                class="example-radio-group"
+                formControlName="vph"
+              >
+                <mat-radio-button
+                  class="example-radio-button"
+                  *ngFor="let vph of opcionesVph"
+                  [value]="vph"
+                >
+                  {{ vph }}
+                </mat-radio-button>
+              </mat-radio-group>
+            </div>
+          </c-col>
+        </c-row>
       </mat-card>
       <br />
 

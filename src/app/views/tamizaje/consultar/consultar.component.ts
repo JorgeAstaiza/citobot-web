@@ -120,8 +120,6 @@ export class ConsultarComponent implements OnInit, OnDestroy {
 
       // Ordenaré por fecha los tamizajes
       this.dataTamizaje.sort(sortFunctionTamizajes);
-      console.log(this.dataTamizaje);
-
       this.dataSource = new MatTableDataSource(this.dataTamizaje);
 
       this.dataSource.sort = this.sort;
