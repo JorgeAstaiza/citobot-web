@@ -345,7 +345,7 @@ export class CrearComponent implements OnInit, OnDestroy {
       );
       return;
     }
-    if (this.formulario.valid && this.checkImagen.value) {
+    if (this.formulario.valid && this.checkImagen.valid) {
       this.loading = true;
       if (this.estadoConfiguracionVph === 'false') {
         this.formulario.get('vph')?.setValue('Sin VPH');
