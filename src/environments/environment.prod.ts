@@ -1,4 +1,4 @@
-export const url = 'https://back-citobot.herokuapp.com/api';
+export const url = 'https://citobot-backend.onrender.com/api';
 
 export const environment = {
   production: true,
