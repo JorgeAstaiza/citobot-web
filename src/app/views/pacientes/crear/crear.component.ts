@@ -86,7 +86,7 @@ export class CrearComponent implements OnInit, OnDestroy {
 
     // Editar Paciente
     if (
-      (this.idPaciente && this.idPaciente !== null) ||
+      this.idPaciente ||
       this.idPaciente !== undefined
     ) {
       // Deshabilito la modificación del Nº. Identificación
@@ -119,50 +119,41 @@ export class CrearComponent implements OnInit, OnDestroy {
 
   private crearFormulario() {
     this.formulario = this.fb.group({
-      per_identificacion: [
-        null,
-        [Validators.required, Validators.maxLength(10)],
-      ],
+      per_identificacion: [null,],
       per_primer_nombre: ['', [Validators.required]],
       per_otros_nombres: [''],
       per_primer_apellido: ['', [Validators.required]],
       per_segundo_apellido: [''],
       pac_fecha_nacimiento: ['', [Validators.required]],
-      pac_direccion: ['', [Validators.required]],
-      per_tip_id: [null, [Validators.required]],
-      pac_telefono: ['', [Validators.required]],
-      pac_celular: ['', [Validators.required]],
-      pac_correo: [
-        '',
-        [Validators.required, Validators.pattern(this.regexEmail)],
-      ],
-      pac_contacto_alternativo: [''],
-      pac_telefono_contacto_alternativo: [''],
-      pac_nivel_educacion: ['', [Validators.required]],
-      pac_estado_civil: ['', [Validators.required]],
-      pac_situacion_laboral: ['', [Validators.required]],
-      pac_regimen_salud: ['', [Validators.required]],
-      pac_estrato: [
-        '',
-        [Validators.required, Validators.min(1), Validators.max(6)],
-      ],
-      pac_diabetes: ['', [Validators.required]],
-      pac_fuma: ['', [Validators.required]],
-      pac_peso: ['', [Validators.required, Validators.min(0)]],
-      pac_talla: ['', [Validators.required, Validators.min(0)]],
-      pac_primera_mestruacion: ['', [Validators.required, Validators.min(0)]],
-      pac_partos: ['', [Validators.required]],
-      pac_dispositivo_intrauterino: ['', [Validators.required]],
-      pac_tiempo_insercion_DIU: ['', [Validators.required]],
-      pac_anticonceptivos_orales: ['', [Validators.required]],
-      pac_parejas_sexuales: ['', [Validators.required, Validators.min(0)]],
-      pac_relacion_condon: ['', [Validators.required]],
-      pac_vacuna_vph: ['', [Validators.required]],
-      pac_ultima_citologia: ['', [Validators.required]],
-      pac_prueba_ADN_VPH: ['', [Validators.required]],
-      pac_menopausia: ['', [Validators.required]],
-      pac_infecciones_ts: ['', [Validators.required]],
-      eps_nombre: ['', [Validators.required]],
+      pac_direccion: [null],
+      per_tip_id: [null],
+      pac_telefono: [null],
+      pac_celular: [null],
+      pac_correo: [null],
+      pac_contacto_alternativo: [null],
+      pac_telefono_contacto_alternativo: [null],
+      pac_nivel_educacion: [null],
+      pac_estado_civil: [null],
+      pac_situacion_laboral: [null],
+      pac_regimen_salud: [null],
+      pac_estrato: [null],
+      pac_diabetes: [null],
+      pac_fuma: [null],
+      pac_peso: [null],
+      pac_talla: [null],
+      pac_primera_mestruacion: [null],
+      pac_partos: [null],
+      pac_dispositivo_intrauterino: [null],
+      pac_tiempo_insercion_DIU: [null],
+      pac_anticonceptivos_orales: [null],
+      pac_parejas_sexuales: [null],
+      pac_relacion_condon: [null],
+      pac_vacuna_vph: [null],
+      pac_ultima_citologia: [null],
+      pac_prueba_ADN_VPH: [null],
+      pac_menopausia: [null],
+      pac_infecciones_ts: [null],
+      eps_nombre: [null],
     });
 
     this.formulario.valueChanges.subscribe((eps) => {
@@ -405,7 +396,7 @@ export class CrearComponent implements OnInit, OnDestroy {
       pac_estado_civil: this.formulario.get('pac_estado_civil')?.value,
       pac_situacion_laboral: this.formulario.get('pac_situacion_laboral')
         ?.value,
-      pac_eps_id: this.idEps,
+      pac_eps_id: 1,
       pac_regimen_salud: this.formulario.get('pac_regimen_salud')?.value,
       pac_estrato: this.formulario.get('pac_estrato')?.value,
       pac_diabetes: this.formulario.get('pac_diabetes')?.value,
