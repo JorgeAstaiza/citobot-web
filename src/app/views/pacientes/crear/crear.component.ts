@@ -85,10 +85,7 @@ export class CrearComponent implements OnInit, OnDestroy {
     this.crearFormulario();
 
     // Editar Paciente
-    if (
-      this.idPaciente ||
-      this.idPaciente !== undefined
-    ) {
+    if (this.idPaciente || this.idPaciente !== undefined) {
       // Deshabilito la modificación del Nº. Identificación
       this.formulario.get('per_identificacion')?.disable();
 
@@ -119,7 +116,7 @@ export class CrearComponent implements OnInit, OnDestroy {
 
   private crearFormulario() {
     this.formulario = this.fb.group({
-      per_identificacion: [null,],
+      per_identificacion: [null],
       per_primer_nombre: ['', [Validators.required]],
       per_otros_nombres: [''],
       per_primer_apellido: ['', [Validators.required]],
