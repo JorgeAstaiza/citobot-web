@@ -60,8 +60,14 @@ export class ImagenService {
     );
   }
 
-  guardarImagenFTP(base64: any): Observable<any> {
-    return this.http.post<any>(`${this.enviromentUrl}/imagenes/ftp`, base64, {
+  guardarImagen(imagen: File): Observable<any> {
+    console.log('imagen servicio', imagen);
+    
+    let formData = new FormData();
+    formData.append('file', imagen);
+    console.log(formData);
+    
+    return this.http.post<any>(`${this.enviromentUrl}/imagenes/save-img-aws`, formData, {
       headers: this.headers,
     });
   }

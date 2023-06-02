@@ -129,7 +129,7 @@
                 <c-col>
                   <div class="mb-3 ctn-img" *ngIf="!modoPruebas">
                     <mat-radio-button
-                      *ngFor="let src of webcamImage; let idx = index"
+                      *ngFor="let src of listaImagenesMostrar; let idx = index"
                       (click)="setPhoto(idx)"
                       [value]="idx"
                       style="margin-bottom: 8px"
@@ -151,7 +151,7 @@
                   <div class="mb-3 ctn-img" *ngIf="modoPruebas">
                     <mat-card
                       class="card-imagen"
-                      *ngFor="let src of webcamImage; let idx = index"
+                      *ngFor="let src of listaImagenesMostrar; let idx = index"
                     >
                       <!-- Previsualización de Imagenes -->
                       <img
@@ -197,7 +197,7 @@
         color="primary"
         [disabled]="cargandoImagenes"
         *ngIf="!loading"
-        (click)="save()"
+        (click)="guardarTamizaje()"
       >
         <mat-icon>save</mat-icon>{{ "Guardar" }}
       </button>

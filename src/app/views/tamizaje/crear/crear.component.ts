@@ -55,14 +55,16 @@ export class CrearComponent implements OnInit, OnDestroy {
   private nextWebcam: Subject<boolean | string> = new Subject<
     boolean | string
   >();
-  public webcamImage: any = [];
+  public listaImagenesMostrar: any = [];
+  public listaImagenesGuardar: any = [];
+
   public deviceId!: string;
   // webcam snapshot trigger
   private trigger: Subject<void> = new Subject<void>();
   public canvas!: ElementRef;
   captures: WebcamImage[] = [];
 
-  private base64Img!: string;
+  private propiedadesTipoFileImagen!: any;
   public btnCapture = false;
   private LIMITE_IMAGENES = 3;
   public cargandoImagenes = false;
@@ -116,7 +118,7 @@ export class CrearComponent implements OnInit, OnDestroy {
     this.verificarConfiguracionesEnLocalStorage();
   }
   ngOnDestroy(): void {
-    this.webcamImage = [];
+    this.listaImagenesMostrar = [];
   }
   private contruir_formulario(): void {
     this.formulario = this._fb.group({
@@ -158,7 +160,8 @@ export class CrearComponent implements OnInit, OnDestroy {
     try {
       this.imagenSvc.getImagenByIdTamizaje(idTamizaje).subscribe((imagen) => {
         this.cargandoImagenes = true;
-
+        console.log(imagen);
+        
         if (imagen.objetoRespuesta.length > 1) {
           this.modoPruebas = true;
           this.LIMITE_IMAGENES = 5;
@@ -198,14 +201,14 @@ export class CrearComponent implements OnInit, OnDestroy {
           imageAsDataUrl: reader.result,
           imageAsBase64: reader.result,
         };
-        this.webcamImage.push(obj);
+        this.listaImagenesMostrar.push(obj);
         if (this.LIMITE_IMAGENES === 5) {
-          if (this.webcamImage.length === this.LIMITE_IMAGENES) {
+          if (this.listaImagenesMostrar.length === this.LIMITE_IMAGENES) {
             this.cargandoImagenes = false;
             this.btnCapture = true;
           }
         } else {
-          if (this.webcamImage.length === 1) {
+          if (this.listaImagenesMostrar.length === 1) {
             this.cargandoImagenes = false;
             this.btnCapture = true;
             this.setPhoto(0);
@@ -307,8 +310,10 @@ export class CrearComponent implements OnInit, OnDestroy {
   }
 
   public handleImage(webcamImage: WebcamImage): void {
-    this.webcamImage.push(webcamImage);
-    if (this.webcamImage.length === this.LIMITE_IMAGENES) {
+    console.log(webcamImage);
+    
+    this.listaImagenesMostrar.push(webcamImage);
+    if (this.listaImagenesMostrar.length === this.LIMITE_IMAGENES) {
       this.btnCapture = true;
     }
   }
@@ -326,18 +331,11 @@ export class CrearComponent implements OnInit, OnDestroy {
   }
 
   setPhoto(idx: number) {
-    if (this.webcamImage[idx].imageAsBase64 === undefined) {
-      this.base64Img = this.webcamImage[idx].imageAsDataUrl.replace(
-        'data:image/jpeg;base64,',
-        ''
-      );
-    } else {
-      this.base64Img = this.webcamImage[idx].imageAsBase64;
-    }
+    this.propiedadesTipoFileImagen = this.listaImagenesGuardar[idx];
   }
 
-  public save(): void {
-    if (this.modoPruebas && this.webcamImage.length !== this.LIMITE_IMAGENES) {
+  public guardarTamizaje(): void {
+    if (this.modoPruebas && this.listaImagenesMostrar.length !== this.LIMITE_IMAGENES) {
       this._snackbar.status(
         101,
         '',
@@ -373,7 +371,7 @@ export class CrearComponent implements OnInit, OnDestroy {
         if (res.codigoRespuesta === 0) {
           // Obtener el id del último tamizaje agregado: útil para guardar la imagen
           const idTamizaje = res.objetoRespuesta.insertId;
-          this.guardarImagenViaFTP(idTamizaje);
+          this.guardarImagenEnAWS(idTamizaje);
         } else {
           // 404: Error, No es posible procesar la solicitud
           this._snackbar.status(404);
@@ -385,14 +383,14 @@ export class CrearComponent implements OnInit, OnDestroy {
     });
   }
 
-  public guardarImagenViaFTP(idUltimoTamizaje: number): void {
+  public guardarImagenEnAWS(idUltimoTamizaje: number): void {
     if (this.modoPruebas) {
-      for (const key in this.webcamImage) {
+      for (const key in this.listaImagenesMostrar) {
         let fail = false;
         const objImagen = {
           base64:
-            this.webcamImage[key].imageAsBase64 ||
-            this.webcamImage[key].imageAsDataUrl.replace(
+            this.listaImagenesMostrar[key].imageAsBase64 ||
+            this.listaImagenesMostrar[key].imageAsDataUrl.replace(
               'data:image/jpeg;base64,',
               ''
             ),
@@ -403,23 +401,24 @@ export class CrearComponent implements OnInit, OnDestroy {
         if (fail) {
           break;
         }
-        this.imagenSvc.guardarImagenFTP(objImagen).subscribe((res) => {
-          if (res.codigoRespuesta === 0) {
-            this.guardarRutaImagen(idUltimoTamizaje, parseInt(key) + 1);
-          } else {
-            this.eliminarTamizajeById(idUltimoTamizaje);
-            fail = true;
-            this.loading = false;
-          }
-        });
+        // this.imagenSvc.guardarImagen(objImagen).subscribe((res) => {
+        //   if (res.codigoRespuesta === 0) {
+        //     this.guardarRutaImagen(idUltimoTamizaje, parseInt(key) + 1);
+        //   } else {
+        //     this.eliminarTamizajeById(idUltimoTamizaje);
+        //     fail = true;
+        //     this.loading = false;
+        //   }
+        // });
       }
     } else {
-      const objImagen = {
-        base64: this.base64Img,
+      const files = {
+        files: this.propiedadesTipoFileImagen,
         nombre: `${this.paciente_identificacion}_${idUltimoTamizaje}.jpeg`,
       };
-
-      this.imagenSvc.guardarImagenFTP(objImagen).subscribe((res) => {
+      console.log(this.propiedadesTipoFileImagen[0]);
+      
+      this.imagenSvc.guardarImagen(this.propiedadesTipoFileImagen[0]).subscribe((res) => {
         if (res.codigoRespuesta === 0) {
           this.guardarRutaImagen(idUltimoTamizaje);
         } else {
@@ -430,7 +429,7 @@ export class CrearComponent implements OnInit, OnDestroy {
   }
 
   private guardarRutaImagen(idUltimoTamizaje: number, key?: number) {
-    const lengthImages = this.webcamImage.length;
+    const lengthImages = this.listaImagenesMostrar.length;
     let newImagen: Imagen;
     if (key) {
       newImagen = {
@@ -475,30 +474,30 @@ export class CrearComponent implements OnInit, OnDestroy {
   }
 
   public capturarImagen(event: any, NumeroImagen: string): any {
-    if (event.target.files.length > 1) {
-      for (const iterator of event.target.files) {
-        const archivoCapturado = iterator;
+    this.listaImagenesGuardar.push(event.target.files);
+    if (this.listaImagenesMostrar.length === this.LIMITE_IMAGENES) {
+      this.btnCapture = true;
+    }
+    if (this.btnCapture === false) {
+      if (event.target.files.length > 1) {
+        for (const iterator of event.target.files) {
+          const archivoCapturado = iterator;
+          this.extraerBase64(archivoCapturado).then((imagen: any) => {
+            const obj = {
+              imageAsDataUrl: imagen.base,
+            };
+            this.listaImagenesMostrar.push(obj);
+          });
+        }
+      } else {
+        const archivoCapturado = event.target.files[0];
         this.extraerBase64(archivoCapturado).then((imagen: any) => {
           const obj = {
             imageAsDataUrl: imagen.base,
           };
-          this.webcamImage.push(obj);
-          if (this.webcamImage.length === this.LIMITE_IMAGENES) {
-            this.btnCapture = true;
-          }
+          this.listaImagenesMostrar.push(obj);
         });
       }
-    } else {
-      const archivoCapturado = event.target.files[0];
-      this.extraerBase64(archivoCapturado).then((imagen: any) => {
-        const obj = {
-          imageAsDataUrl: imagen.base,
-        };
-        this.webcamImage.push(obj);
-        if (this.webcamImage.length === this.LIMITE_IMAGENES) {
-          this.btnCapture = true;
-        }
-      });
     }
   }
 

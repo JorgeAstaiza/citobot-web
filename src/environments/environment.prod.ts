@@ -1,4 +1,4 @@
-export const url = 'https://citobot-backend.onrender.com/api';
+export const url = 'https://18.117.240.91/api';
 
 export const environment = {
   production: true,

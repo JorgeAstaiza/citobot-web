@@ -62,7 +62,7 @@ export class WebcamSnapshotComponent implements OnInit {
     this.isCaptured = true;
     var image = new Image();
     image.src = this.captures[idx];
-    this.imagen.emit(image.src);
+    // this.imagen.emit(image.src);
     this.drawImageToCanvas(image);
   }
 
