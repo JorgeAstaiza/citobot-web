@@ -332,6 +332,8 @@ export class CrearComponent implements OnInit, OnDestroy {
 
   setPhoto(idx: number) {
     this.propiedadesTipoFileImagen = this.listaImagenesGuardar[idx];
+    console.log(this.propiedadesTipoFileImagen[0]);
+    
   }
 
   public guardarTamizaje(): void {
@@ -412,13 +414,10 @@ export class CrearComponent implements OnInit, OnDestroy {
         // });
       }
     } else {
-      const files = {
-        files: this.propiedadesTipoFileImagen,
-        nombre: `${this.paciente_identificacion}_${idUltimoTamizaje}.jpeg`,
-      };
+      const nombreImgGuardar = `${this.paciente_identificacion}_${idUltimoTamizaje}.jpeg`
       console.log(this.propiedadesTipoFileImagen[0]);
       
-      this.imagenSvc.guardarImagen(this.propiedadesTipoFileImagen[0]).subscribe((res) => {
+      this.imagenSvc.guardarImagen(this.propiedadesTipoFileImagen[0], nombreImgGuardar).subscribe((res) => {
         if (res.codigoRespuesta === 0) {
           this.guardarRutaImagen(idUltimoTamizaje);
         } else {
@@ -473,7 +472,9 @@ export class CrearComponent implements OnInit, OnDestroy {
     this.dialog.open(InstruccionesTamizajeComponent);
   }
 
-  public capturarImagen(event: any, NumeroImagen: string): any {
+  public capturarImagen(event: any): any {
+    console.log(event.target.files);
+    
     this.listaImagenesGuardar.push(event.target.files);
     if (this.listaImagenesMostrar.length === this.LIMITE_IMAGENES) {
       this.btnCapture = true;

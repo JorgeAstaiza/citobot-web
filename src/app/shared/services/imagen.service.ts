@@ -60,15 +60,17 @@ export class ImagenService {
     );
   }
 
-  guardarImagen(imagen: File): Observable<any> {
-    console.log('imagen servicio', imagen);
-    
+  guardarImagen(imagen: File, nombreImg: string): Observable<any> {
+    const headers = new HttpHeaders({'Content-Type': 'multipart/form-data'}).set(
+      'Authorization',
+      localStorage.getItem('token') || ''
+    );
     let formData = new FormData();
     formData.append('file', imagen);
-    console.log(formData);
+    formData.append('nombre', nombreImg);
     
     return this.http.post<any>(`${this.enviromentUrl}/imagenes/save-img-aws`, formData, {
-      headers: this.headers,
+      headers: headers,
     });
   }
 
