@@ -13,6 +13,8 @@ import { UsuarioService } from 'src/app/shared/services/usuario.service';
 export class LoginComponent implements OnInit {
   formulario!: FormGroup;
   hide: boolean = true;
+  loading: boolean = false;
+
   constructor(
     public authService: AuthService,
     private fb: FormBuilder,
@@ -25,8 +27,8 @@ export class LoginComponent implements OnInit {
 
   private crearFormulario() {
     this.formulario = this.fb.group({
-      usu_email: [null, [Validators.required]],
-      usu_clave: [null, [Validators.required]],
+      usu_email: ['sksmartinez@gmail.com', [Validators.required]],
+      usu_clave: ['123456', [Validators.required]],
     });
   }
 
@@ -34,6 +36,8 @@ export class LoginComponent implements OnInit {
     const email = this.formulario.get('usu_email')?.value;
     const password = this.formulario.get('usu_clave')?.value;
     if (this.formulario.valid) {
+      // Mostrar mensaje de carga
+      this.loading = true;
       this.usuarioService.getUsuarioByEmail(email).subscribe((res) => {
         if (res.objetoRespuesta.length !== 0) {
           if (res.objetoRespuesta[0].usu_estado === 'Activo') {
@@ -47,9 +51,11 @@ export class LoginComponent implements OnInit {
             }
           } else {
             this._snackbar.status(101, 'Error', 'Usuario inactivo');
+            this.loading = false;
           }
         } else {
           this._snackbar.status(101, 'Error', 'Usuario no registrado');
+          this.loading = false;
         }
       });
     }

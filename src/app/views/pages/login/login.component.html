@@ -42,7 +42,10 @@
                 </c-col>
             </c-row>
 
-            <button class="button-iniciar" (click)="loginUser()">Iniciar</button>
+            <button class="button-iniciar" (click)="loginUser()" [disabled]="loading">
+                <span *ngIf="!loading">Iniciar</span>
+                <span *ngIf="loading" class="spinner"></span>
+              </button>
 
             <!-- Restablecer la contraseña -->
             <c-row style="margin-top: 20px;">
