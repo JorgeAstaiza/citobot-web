@@ -10,7 +10,7 @@
     *ngIf="!multipleImagenes"
     class="img_tarjeta"
     mat-card-image
-    src="{{ imgFromFtp ? imgFromFtp : 'assets/img/brand/svg-spinner.svg' }}"
+    src="{{ URLImagenAWS ? URLImagenAWS : 'assets/img/brand/svg-spinner.svg' }}"
   />
 
   <c-carousel *ngIf="multipleImagenes">

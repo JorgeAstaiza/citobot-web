@@ -13,7 +13,7 @@ export class DetalleTamizajeComponent implements OnInit {
   public infoPaciente: any = [];
   public nombreCompleto: string = '';
   public urlImagen: string = '';
-  public imgFromFtp: any;
+  public URLImagenAWS!: string;
   public estadoConfiguracionVph: boolean = false;
   public usuario: any;
   public multipleImagenes = false;
@@ -67,12 +67,12 @@ export class DetalleTamizajeComponent implements OnInit {
         .subscribe((imagen) => {
           if (imagen.objetoRespuesta.length > 1) {
             for (let i = 0; i < imagen.objetoRespuesta.length; i++) {
-              this.obtenerImgFtp(imagen.objetoRespuesta[i].ima_ruta);
+              this.obtenerURLImgAWS(imagen.objetoRespuesta[i].ima_ruta);
             }
           } else {
             if (imagen.objetoRespuesta[0].ima_ruta !== undefined) {
               this.urlImagen = imagen.objetoRespuesta[0].ima_ruta;
-              this.obtenerImgFtp(this.urlImagen);
+              this.obtenerURLImgAWS(this.urlImagen);
             }
           }
         });
@@ -81,53 +81,40 @@ export class DetalleTamizajeComponent implements OnInit {
     }
   }
 
-  private obtenerImgFtp(nombre: string) {
-    const objEnviar = {
-      nombreImg: nombre,
-    };
-    this.imagen.getImagenByFtp(objEnviar).subscribe((res: any) => {
+  private obtenerURLImgAWS(nombre: string) {
+    this.imagen.obtenerURLImagenAWS(nombre).subscribe((res: any) => {
       if (res) {
-        this.createImageFromBlob(res);
+        this.createImageFromBlob(res.url);
       }
     });
   }
 
-  async createImageFromBlob(image: Blob) {
-    let reader = new FileReader();
-
-    await reader.addEventListener(
-      'load',
-      () => {
-        if (this.multipleImagenes) {
-          this.contadorImg++;
-          switch (this.contadorImg) {
-            case 1:
-              this.imag1 = reader.result;
-              break;
-            case 2:
-              this.imag2 = reader.result;
-              break;
-            case 3:
-              this.imag3 = reader.result;
-              break;
-            case 4:
-              this.imag4 = reader.result;
-              break;
-            case 5:
-              this.imag5 = reader.result;
-              break;
-          }
-        } else {
-          this.imgFromFtp = reader.result;
-        }
-      },
-      false
-    );
-
-    if (image) {
-      reader.readAsDataURL(image);
-    }
+  async createImageFromBlob(image: string) {
+    if (this.multipleImagenes) {
+      this.contadorImg++;
+      switch (this.contadorImg) {
+        case 1:
+          this.imag1 = image
+          break;
+        case 2:
+          this.imag2 = image
+          break;
+        case 3:
+          this.imag3 = image
+          break;
+        case 4:
+          this.imag4 = image
+          break;
+        case 5:
+          this.imag5 = image
+          break;
+        default:
+          break;
+      }
+  } else {
+    this.URLImagenAWS = image;
   }
+}
 
   onNoClick(): void {
     this.dialogRef.close();

@@ -47,7 +47,6 @@ export class CrearComponent implements OnInit, OnDestroy {
   public estadoConfiguracionVph: string | null = '';
   public estadoConfiguracionModo: string | null = '';
   public urlImagen: string = '';
-  private msmAgregado: string = 'Agregado Exitosamente!';
   contrastes: string[] = [];
   public showWebcam = true;
   public allowCameraSwitch = true;
@@ -63,8 +62,8 @@ export class CrearComponent implements OnInit, OnDestroy {
   private trigger: Subject<void> = new Subject<void>();
   public canvas!: ElementRef;
   captures: WebcamImage[] = [];
-
-  private propiedadesTipoFileImagen!: any;
+  public tipoImagen = 'image/jpeg';
+  private propiedadesTipoFileImagen!: File;
   public btnCapture = false;
   private LIMITE_IMAGENES = 3;
   public cargandoImagenes = false;
@@ -98,6 +97,8 @@ export class CrearComponent implements OnInit, OnDestroy {
         } else {
           this.tamizajeApartirDeOtro = false;
         }
+        console.log(params.idTamizaje);
+        
         this.obtenerImagenFtp(params.idTamizaje);
       }
     });
@@ -160,21 +161,19 @@ export class CrearComponent implements OnInit, OnDestroy {
     try {
       this.imagenSvc.getImagenByIdTamizaje(idTamizaje).subscribe((imagen) => {
         this.cargandoImagenes = true;
-        console.log(imagen);
-        
         if (imagen.objetoRespuesta.length > 1) {
           this.modoPruebas = true;
           this.LIMITE_IMAGENES = 5;
           for (const iterator of imagen.objetoRespuesta) {
             this.urlImagen = iterator.ima_ruta;
-            this.obtenerImgFtp(this.urlImagen);
+            this.obtenerUrlImagenAWS(this.urlImagen);
           }
         } else {
           if (imagen.objetoRespuesta[0].ima_ruta !== undefined) {
             this.modoPruebas = false;
             this.LIMITE_IMAGENES = 3;
             this.urlImagen = imagen.objetoRespuesta[0].ima_ruta;
-            this.obtenerImgFtp(this.urlImagen);
+            this.obtenerUrlImagenAWS(this.urlImagen);
           }
         }
       });
@@ -183,46 +182,33 @@ export class CrearComponent implements OnInit, OnDestroy {
     }
   }
 
-  private obtenerImgFtp(nombre: string) {
-    const objEnviar = {
-      nombreImg: nombre,
-    };
-    this.imagenSvc.getImagenByFtp(objEnviar).subscribe((res) => {
-      this.createImageFromBlob(res);
-    });
-  }
-
-  createImageFromBlob(image: Blob) {
-    let reader = new FileReader();
-    reader.addEventListener(
-      'load',
-      () => {
-        const obj = {
-          imageAsDataUrl: reader.result,
-          imageAsBase64: reader.result,
-        };
-        this.listaImagenesMostrar.push(obj);
-        if (this.LIMITE_IMAGENES === 5) {
-          if (this.listaImagenesMostrar.length === this.LIMITE_IMAGENES) {
-            this.cargandoImagenes = false;
-            this.btnCapture = true;
-          }
-        } else {
-          if (this.listaImagenesMostrar.length === 1) {
-            this.cargandoImagenes = false;
-            this.btnCapture = true;
-            this.setPhoto(0);
-            this.checkImagen.setValue(0);
-            this.checkImagen.markAsTouched();
-          }
+  private obtenerUrlImagenAWS(nombreImagen: string) {
+    this.imagenSvc.obtenerURLImagenAWS(nombreImagen).subscribe((res) => {
+      console.log(res);
+      if (!res.url) {
+        return
+      }
+      this.cargandoImagenes = false;
+      const imagenMostrar = {
+        imageAsDataUrl: res.url
+      }
+      this.listaImagenesMostrar.push(imagenMostrar);
+      this.listaImagenesGuardar.push(imagenMostrar);
+      if (this.LIMITE_IMAGENES === 5) {
+        if (this.listaImagenesMostrar.length === this.LIMITE_IMAGENES) {
+          this.cargandoImagenes = false;
+          this.btnCapture = true;
         }
-      },
-      false
-    );
-
-    if (image) {
-      reader.readAsDataURL(image);
-    }
+      } else {
+        if (this.listaImagenesMostrar.length === 1) {
+          this.cargandoImagenes = false;
+          this.btnCapture = true;
+          this.setPhoto(0);
+          this.checkImagen.setValue(0);
+          this.checkImagen.markAsTouched();
+        }
+      }
+    })
   }
 
   private obtenerNombreDelPaciente(): void {
@@ -311,11 +297,44 @@ export class CrearComponent implements OnInit, OnDestroy {
 
   public handleImage(webcamImage: WebcamImage): void {
     console.log(webcamImage);
-    
+    // Convierte la imagen en un objeto de tipo File
+    const imageFile = this.dataURLtoFile(webcamImage.imageAsDataUrl, 'foto.png');
     this.listaImagenesMostrar.push(webcamImage);
+    this.listaImagenesGuardar.push(imageFile);
     if (this.listaImagenesMostrar.length === this.LIMITE_IMAGENES) {
       this.btnCapture = true;
     }
+  }
+
+
+  /**
+   * convierte la imagen capturada por webcam a tipo File
+   * @param dataUrl 
+   * @param filename 
+   * @returns imagen tipo File
+   */
+  private dataURLtoFile(dataUrl: string, filename: string): File {
+
+    const arr = dataUrl.split(',');
+    const matchResult = arr[0].match(/:(.*?);/);
+    const mime = matchResult ? matchResult[1] : '';
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], filename, { type: mime });
+  }
+
+  private createFileList(files: File[]): FileList {
+    const fileList: FileList = {
+      length: files.length,
+      item(index: number): File | null {
+        return index < files.length ? files[index] : null;
+      }
+    };
+    return fileList;
   }
 
   public cameraWasSwitched(deviceId: string): void {
@@ -332,7 +351,12 @@ export class CrearComponent implements OnInit, OnDestroy {
 
   setPhoto(idx: number) {
     this.propiedadesTipoFileImagen = this.listaImagenesGuardar[idx];
-    console.log(this.propiedadesTipoFileImagen[0]);
+    this.listaImagenesGuardar[idx][0] ? this.propiedadesTipoFileImagen = this.listaImagenesGuardar[idx][0] 
+    : this.propiedadesTipoFileImagen = this.listaImagenesGuardar[idx];
+    
+    console.log(this.listaImagenesGuardar[idx]);
+    
+    console.log(this.propiedadesTipoFileImagen);
     
   }
 
@@ -385,41 +409,29 @@ export class CrearComponent implements OnInit, OnDestroy {
     });
   }
 
-  public guardarImagenEnAWS(idUltimoTamizaje: number): void {
+  guardarImagenEnAWS(idUltimoTamizaje: number) {
     if (this.modoPruebas) {
-      for (const key in this.listaImagenesMostrar) {
+      for (const key in this.listaImagenesGuardar) {
         let fail = false;
-        const objImagen = {
-          base64:
-            this.listaImagenesMostrar[key].imageAsBase64 ||
-            this.listaImagenesMostrar[key].imageAsDataUrl.replace(
-              'data:image/jpeg;base64,',
-              ''
-            ),
-          nombre: `${this.paciente_identificacion}_${idUltimoTamizaje}_${
-            parseInt(key) + 1
-          }.jpeg`,
-        };
         if (fail) {
           break;
         }
-        // this.imagenSvc.guardarImagen(objImagen).subscribe((res) => {
-        //   if (res.codigoRespuesta === 0) {
-        //     this.guardarRutaImagen(idUltimoTamizaje, parseInt(key) + 1);
-        //   } else {
-        //     this.eliminarTamizajeById(idUltimoTamizaje);
-        //     fail = true;
-        //     this.loading = false;
-        //   }
-        // });
+        const nombreImgGuardar = `${this.paciente_identificacion}_${idUltimoTamizaje}_${parseInt(key) + 1}.jpeg`;
+        this.imagenSvc.guardarImagen(this.listaImagenesGuardar[key], nombreImgGuardar).subscribe((res) => {
+          if (res.result.$metadata.httpStatusCode === 200) {
+            this.guardarRutaImagen(idUltimoTamizaje, nombreImgGuardar, parseInt(key) + 1);
+          } else {
+            this.eliminarTamizajeById(idUltimoTamizaje);
+            fail = true;
+            this.loading = false;
+          }
+        });
       }
     } else {
-      const nombreImgGuardar = `${this.paciente_identificacion}_${idUltimoTamizaje}.jpeg`
-      console.log(this.propiedadesTipoFileImagen[0]);
-      
-      this.imagenSvc.guardarImagen(this.propiedadesTipoFileImagen[0], nombreImgGuardar).subscribe((res) => {
-        if (res.codigoRespuesta === 0) {
-          this.guardarRutaImagen(idUltimoTamizaje);
+      const nombreImgGuardar = `${this.paciente_identificacion}_${idUltimoTamizaje}.jpeg` 
+      this.imagenSvc.guardarImagen(this.propiedadesTipoFileImagen, nombreImgGuardar).subscribe((res) => {     
+        if (res.result.$metadata.httpStatusCode === 200) {
+          this.guardarRutaImagen(idUltimoTamizaje, nombreImgGuardar);
         } else {
           this.eliminarTamizajeById(idUltimoTamizaje);
         }
@@ -427,33 +439,26 @@ export class CrearComponent implements OnInit, OnDestroy {
     }
   }
 
-  private guardarRutaImagen(idUltimoTamizaje: number, key?: number) {
+  private guardarRutaImagen(idUltimoTamizaje: number, nombreImagen: string, key?: number | null) {
     const lengthImages = this.listaImagenesMostrar.length;
     let newImagen: Imagen;
-    if (key) {
-      newImagen = {
-        ima_tam_id: idUltimoTamizaje,
-        ima_tipo: 'jpeg', //TODO: Colocar esto dinámicamente y los ENUM: Mayúsculas
-        ima_ruta: `${this.paciente_identificacion}_${idUltimoTamizaje}_${key}.jpeg`,
-      };
-    } else {
-      newImagen = {
-        ima_tam_id: idUltimoTamizaje,
-        ima_tipo: 'jpeg', //TODO: Colocar esto dinámicamente y los ENUM: Mayúsculas
-        ima_ruta: `${this.paciente_identificacion}_${idUltimoTamizaje}.jpeg`,
-      };
-    }
+    const mensajeAgregadoExito = 'Agregado Exitosamente!';
+    newImagen = {
+      ima_tam_id: idUltimoTamizaje,
+      ima_tipo: 'jpeg', //TODO: Colocar esto dinámicamente y los ENUM: Mayúsculas
+      ima_ruta: nombreImagen,
+    };
     this.imagenSvc.createImagenConRuta(newImagen).subscribe((res) => {
       if (res.codigoRespuesta === 0) {
         if (key) {
           if (key + 1 === lengthImages) {
             this.loading = false;
-            this._snackbar.status(707, this.msmAgregado);
+            this._snackbar.status(707, mensajeAgregadoExito);
             this.router.navigateByUrl('tamizajes/consultar');
           }
         } else {
           this.loading = false;
-          this._snackbar.status(707, this.msmAgregado);
+          this._snackbar.status(707, mensajeAgregadoExito);
           this.router.navigateByUrl('tamizajes/consultar');
         }
       } else {
@@ -472,26 +477,25 @@ export class CrearComponent implements OnInit, OnDestroy {
     this.dialog.open(InstruccionesTamizajeComponent);
   }
 
-  public capturarImagen(event: any): any {
-    console.log(event.target.files);
-    
-    this.listaImagenesGuardar.push(event.target.files);
-    if (this.listaImagenesMostrar.length === this.LIMITE_IMAGENES) {
+  public capturarImagen(event: any): void {
+    const numeroElementoAgregar = event.target.files.length;
+    for (const imagen of event.target.files) {
+      console.log(imagen);
+      this.listaImagenesGuardar.push(imagen);
+    }
+    if (this.listaImagenesGuardar.length > this.LIMITE_IMAGENES) {
+      this._snackbar.status(304);
+      this.btnCapture = false;
+      this.listaImagenesGuardar.splice(-numeroElementoAgregar);
+      return;
+    }
+
+    if (this.listaImagenesGuardar.length === this.LIMITE_IMAGENES) {
       this.btnCapture = true;
     }
-    if (this.btnCapture === false) {
-      if (event.target.files.length > 1) {
-        for (const iterator of event.target.files) {
-          const archivoCapturado = iterator;
-          this.extraerBase64(archivoCapturado).then((imagen: any) => {
-            const obj = {
-              imageAsDataUrl: imagen.base,
-            };
-            this.listaImagenesMostrar.push(obj);
-          });
-        }
-      } else {
-        const archivoCapturado = event.target.files[0];
+    if (event.target.files.length > 1) {
+      for (const iterator of event.target.files) {
+        const archivoCapturado = iterator;
         this.extraerBase64(archivoCapturado).then((imagen: any) => {
           const obj = {
             imageAsDataUrl: imagen.base,
@@ -499,7 +503,16 @@ export class CrearComponent implements OnInit, OnDestroy {
           this.listaImagenesMostrar.push(obj);
         });
       }
+    } else {
+      const archivoCapturado = event.target.files[0];
+      this.extraerBase64(archivoCapturado).then((imagen: any) => {
+        const obj = {
+          imageAsDataUrl: imagen.base,
+        };
+        this.listaImagenesMostrar.push(obj);
+      });
     }
+
   }
 
   private extraerBase64 = async ($event: any) =>

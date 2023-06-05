@@ -27,6 +27,14 @@ export class SnackbarToastService {
                     duration: 2000,
                 });
                 break;
+                // 304: total de imagenes cargadas supera el limite
+            case 304:
+                this.toast.info({
+                    detail: 'Total de imagenes',
+                    summary: 'El total de imagenes cargadas supera el limite',
+                    duration: 2000,
+                });
+                break;
 
             // 600: Completa los campos obligatorios
             case 600:

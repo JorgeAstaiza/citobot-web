@@ -5,6 +5,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 
 import { url } from '../../../environments/environment';
 import { Imagen } from '../../models/imagen';
+import axios from 'axios';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +19,7 @@ export class ImagenService {
     localStorage.getItem('token') || ''
   );
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getImagenByIdTamizaje(id: number): Observable<any> {
     return this.http.get<Imagen>(
@@ -29,16 +30,11 @@ export class ImagenService {
     );
   }
 
-  getImagenByFtp(nombre: any): Observable<Blob> {
-    return this.http.post(
-      `${this.enviromentUrl}/imagenes/ftpdescargar`,
-      nombre,
+  obtenerURLImagenAWS(nombre: string): Observable<any> {
+    return this.http.get(
+      `${this.enviromentUrl}/imagenes/get-img-aws/${nombre}`,
       {
-        responseType: 'blob',
-        headers: new HttpHeaders().set(
-          'Authorization',
-          localStorage.getItem('token') || ''
-        ),
+        headers: this.headers,
       }
     );
   }
@@ -61,16 +57,23 @@ export class ImagenService {
   }
 
   guardarImagen(imagen: File, nombreImg: string): Observable<any> {
-    const headers = new HttpHeaders({'Content-Type': 'multipart/form-data'}).set(
-      'Authorization',
-      localStorage.getItem('token') || ''
-    );
+    console.log(imagen, nombreImg);
     let formData = new FormData();
-    formData.append('file', imagen);
+    formData.append('file', imagen, nombreImg);
     formData.append('nombre', nombreImg);
-    
-    return this.http.post<any>(`${this.enviromentUrl}/imagenes/save-img-aws`, formData, {
-      headers: headers,
+    const headers = {
+      'Authorization': localStorage.getItem('token') || '',
+      'Content-Type': 'multipart/form-data'
+    };
+    return new Observable<any>((observer) => {
+      axios.post(`${this.enviromentUrl}/imagenes/save-img-aws`, formData, { headers }).then(
+        response => {
+          observer.next(response.data);
+          observer.complete()
+        }
+      ).catch(error => {
+        observer.error(error)
+      })
     });
   }
 

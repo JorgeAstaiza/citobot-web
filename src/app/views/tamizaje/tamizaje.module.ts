@@ -19,10 +19,9 @@ import { AngularMaterialModule } from '../../shared/angular-material/angular-mat
 import { ConsultarComponent } from './consultar/consultar.component';
 import { CrearComponent } from './crear/crear.component';
 import { TamizajeRoutingModule } from './tamizaje-routing.module';
-import { WebcamSnapshotComponent } from './webcam-snapshot/webcam-snapshot.component';
 
 @NgModule({
-  declarations: [CrearComponent, ConsultarComponent, WebcamSnapshotComponent],
+  declarations: [CrearComponent, ConsultarComponent],
   imports: [
     AngularMaterialModule,
     CommonModule,
@@ -39,7 +38,7 @@ import { WebcamSnapshotComponent } from './webcam-snapshot/webcam-snapshot.compo
     ModalModule,
     WebcamModule,
     FormsModule,
-    SpinnerModule,
-  ],
+    SpinnerModule
+  ]
 })
 export class TamizajeModule {}
