@@ -39,6 +39,20 @@ export class ImagenService {
     );
   }
 
+  descargarImagenTipoFile(nombreImg: string): Observable<Blob> {
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      localStorage.getItem('token') || ''
+    );
+    return this.http.get(
+      `${this.enviromentUrl}/imagenes/descargar-img/${nombreImg}`,
+      {
+        headers: headers,
+        responseType: 'blob'
+      }
+    );
+  }
+
   getTotalImagenes(idTamizaje: number): Observable<any> {
     return this.http.get<Imagen>(
       `${this.enviromentUrl}/imagenes/total-img?id=${idTamizaje}`,
@@ -57,7 +71,6 @@ export class ImagenService {
   }
 
   guardarImagen(imagen: File, nombreImg: string): Observable<any> {
-    console.log(imagen, nombreImg);
     let formData = new FormData();
     formData.append('file', imagen, nombreImg);
     formData.append('nombre', nombreImg);

@@ -96,10 +96,8 @@ export class CrearComponent implements OnInit, OnDestroy {
           this.tamizajeApartirDeOtro = true;
         } else {
           this.tamizajeApartirDeOtro = false;
-        }
-        console.log(params.idTamizaje);
-        
-        this.obtenerImagenFtp(params.idTamizaje);
+        }   
+        this.obtenerNombreImg(params.idTamizaje);
       }
     });
   }
@@ -154,7 +152,13 @@ export class CrearComponent implements OnInit, OnDestroy {
     });
   }
 
-  private obtenerImagenFtp(idTamizaje: number) {
+  /**
+   * obtiene el nombre de la imagenes desde la base de datos y con ese nombre se 
+   * consulta en AWS la url y tambien se obtiene la imagen entera de tipo File
+   * para crear un tamizaje a partir de otro
+   * @param idTamizaje 
+   */
+  private obtenerNombreImg(idTamizaje: number) {
     if (!idTamizaje) {
       return;
     }
@@ -167,9 +171,11 @@ export class CrearComponent implements OnInit, OnDestroy {
           for (const iterator of imagen.objetoRespuesta) {
             this.urlImagen = iterator.ima_ruta;
             this.obtenerUrlImagenAWS(this.urlImagen);
+            this.getImageFileFromURL(this.urlImagen);
           }
         } else {
-          if (imagen.objetoRespuesta[0].ima_ruta !== undefined) {
+          if (imagen.objetoRespuesta[0]?.ima_ruta !== undefined) {
+            this.getImageFileFromURL(imagen.objetoRespuesta[0].ima_ruta);
             this.modoPruebas = false;
             this.LIMITE_IMAGENES = 3;
             this.urlImagen = imagen.objetoRespuesta[0].ima_ruta;
@@ -182,9 +188,31 @@ export class CrearComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * obtiene la imagen desde AWS y la transforma en tipo File cuando se quiere crear un tamizaje a partir de otro
+   * @param nombreImg 
+   */
+  getImageFileFromURL(nombreImg: string) {
+    this.imagenSvc.descargarImagenTipoFile(nombreImg).subscribe((res: Blob) => {
+      if (res.type) {
+        const imagen = new File([res], 'image.jpeg', { type: res.type });
+        this.propiedadesTipoFileImagen = imagen;
+        this.listaImagenesGuardar.push(imagen);
+        this.setPhoto(0);
+        this.checkImagen.setValue(0);
+        this.checkImagen.markAsTouched();
+      } else {
+        this._snackbar.status(404);
+      }
+    })
+  }
+
+  /**
+   * obtiene la url publica de la imagen a partir del nombre de la imagen almacenada en AWS
+   * @param nombreImagen 
+   */
   private obtenerUrlImagenAWS(nombreImagen: string) {
     this.imagenSvc.obtenerURLImagenAWS(nombreImagen).subscribe((res) => {
-      console.log(res);
       if (!res.url) {
         return
       }
@@ -193,7 +221,6 @@ export class CrearComponent implements OnInit, OnDestroy {
         imageAsDataUrl: res.url
       }
       this.listaImagenesMostrar.push(imagenMostrar);
-      this.listaImagenesGuardar.push(imagenMostrar);
       if (this.LIMITE_IMAGENES === 5) {
         if (this.listaImagenesMostrar.length === this.LIMITE_IMAGENES) {
           this.cargandoImagenes = false;
@@ -203,13 +230,13 @@ export class CrearComponent implements OnInit, OnDestroy {
         if (this.listaImagenesMostrar.length === 1) {
           this.cargandoImagenes = false;
           this.btnCapture = true;
-          this.setPhoto(0);
-          this.checkImagen.setValue(0);
-          this.checkImagen.markAsTouched();
+          
         }
       }
     })
   }
+
+  
 
   private obtenerNombreDelPaciente(): void {
     this.pacienteService
@@ -276,7 +303,7 @@ export class CrearComponent implements OnInit, OnDestroy {
 
   private obtenerImagenPorIdTamizaje() {
     this.imagenSvc.getImagenByIdTamizaje(this.tam_id).subscribe((imagen) => {
-      this.urlImagen = imagen.objetoRespuesta[0].ima_ruta;
+      this.urlImagen = imagen.objetoRespuesta[0]?.ima_ruta;
     });
   }
 
@@ -296,7 +323,6 @@ export class CrearComponent implements OnInit, OnDestroy {
   }
 
   public handleImage(webcamImage: WebcamImage): void {
-    console.log(webcamImage);
     // Convierte la imagen en un objeto de tipo File
     const imageFile = this.dataURLtoFile(webcamImage.imageAsDataUrl, 'foto.png');
     this.listaImagenesMostrar.push(webcamImage);
@@ -314,7 +340,6 @@ export class CrearComponent implements OnInit, OnDestroy {
    * @returns imagen tipo File
    */
   private dataURLtoFile(dataUrl: string, filename: string): File {
-
     const arr = dataUrl.split(',');
     const matchResult = arr[0].match(/:(.*?);/);
     const mime = matchResult ? matchResult[1] : '';
@@ -325,16 +350,6 @@ export class CrearComponent implements OnInit, OnDestroy {
       u8arr[n] = bstr.charCodeAt(n);
     }
     return new File([u8arr], filename, { type: mime });
-  }
-
-  private createFileList(files: File[]): FileList {
-    const fileList: FileList = {
-      length: files.length,
-      item(index: number): File | null {
-        return index < files.length ? files[index] : null;
-      }
-    };
-    return fileList;
   }
 
   public cameraWasSwitched(deviceId: string): void {
@@ -352,12 +367,7 @@ export class CrearComponent implements OnInit, OnDestroy {
   setPhoto(idx: number) {
     this.propiedadesTipoFileImagen = this.listaImagenesGuardar[idx];
     this.listaImagenesGuardar[idx][0] ? this.propiedadesTipoFileImagen = this.listaImagenesGuardar[idx][0] 
-    : this.propiedadesTipoFileImagen = this.listaImagenesGuardar[idx];
-    
-    console.log(this.listaImagenesGuardar[idx]);
-    
-    console.log(this.propiedadesTipoFileImagen);
-    
+    : this.propiedadesTipoFileImagen = this.listaImagenesGuardar[idx]; 
   }
 
   public guardarTamizaje(): void {
@@ -480,7 +490,6 @@ export class CrearComponent implements OnInit, OnDestroy {
   public capturarImagen(event: any): void {
     const numeroElementoAgregar = event.target.files.length;
     for (const imagen of event.target.files) {
-      console.log(imagen);
       this.listaImagenesGuardar.push(imagen);
     }
     if (this.listaImagenesGuardar.length > this.LIMITE_IMAGENES) {
